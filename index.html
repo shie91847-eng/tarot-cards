@@ -1093,6 +1093,10 @@ function preloadBatch(start, end) {
 }
 setTimeout(() => preloadBatch(0, 22), 3000);
 setTimeout(() => preloadBatch(22, 78), 15000);
+// ===== 微信浏览器检测 =====
+if (/MicroMessenger/i.test(navigator.userAgent)) {
+    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#030014;color:#e8dcc8;font-family:sans-serif;text-align:center;padding:40px;"><div style="font-size:2rem;margin-bottom:20px;">✦</div><div style="font-size:1.1rem;color:#f0d68a;margin-bottom:15px;">Arcana Whisper</div><div style="font-size:0.85rem;line-height:1.8;color:#b8a890;">请点击右上角 <strong style="color:#f0d68a;">⋯</strong><br>选择 <strong style="color:#f0d68a;">「在浏览器中打开」</strong><br>即可正常使用塔罗占卜</div></div>';
+}
 // ===== INIT =====
 window.addEventListener('resize',resize);
 window.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
