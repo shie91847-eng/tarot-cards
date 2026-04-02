@@ -35,27 +35,37 @@
         #auroraCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.5; mix-blend-mode: screen; }
 
         .milky-way {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
-            background:
-                radial-gradient(ellipse 35% 100% at 50% 40%, rgba(180,160,220,0.08) 0%, rgba(120,100,180,0.05) 20%, rgba(80,60,140,0.03) 40%, transparent 70%),
-                radial-gradient(ellipse 20% 80% at 48% 45%, rgba(200,180,240,0.06) 0%, rgba(150,120,200,0.04) 30%, transparent 60%),
-                radial-gradient(ellipse 15% 50% at 52% 50%, rgba(255,220,200,0.04) 0%, transparent 50%);
-            animation: milkyDrift 80s ease-in-out infinite alternate;
-        }
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+    background:
+        radial-gradient(ellipse 45% 120% at 48% 35%, rgba(180,160,220,0.12) 0%, rgba(120,100,180,0.08) 15%, rgba(80,60,140,0.05) 35%, transparent 65%),
+        radial-gradient(ellipse 25% 90% at 46% 40%, rgba(220,200,255,0.08) 0%, rgba(150,120,200,0.05) 25%, transparent 55%),
+        radial-gradient(ellipse 18% 60% at 52% 45%, rgba(255,230,210,0.06) 0%, transparent 45%),
+        radial-gradient(ellipse 60% 30% at 50% 38%, rgba(160,140,200,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 30% 50%, rgba(100,140,220,0.07) 0%, rgba(60,100,180,0.04) 30%, transparent 60%),
+        radial-gradient(ellipse 35% 45% at 70% 40%, rgba(80,120,200,0.06) 0%, rgba(50,80,160,0.03) 25%, transparent 55%),
+        radial-gradient(ellipse 12% 40% at 40% 50%, rgba(200,170,255,0.04) 0%, transparent 40%),
+        radial-gradient(ellipse 10% 35% at 58% 42%, rgba(255,200,180,0.03) 0%, transparent 35%);
+    animation: milkyDrift 80s ease-in-out infinite alternate;
+}
         @keyframes milkyDrift { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(10px,-5px) scale(1.02)} 100%{transform:translate(-5px,5px) scale(0.98)} }
 
         .nebula-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .nebula-1 {
-            background: radial-gradient(ellipse 60% 40% at 25% 55%, rgba(80,20,120,0.10) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 60% at 75% 35%, rgba(20,50,120,0.08) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 30% at 55% 75%, rgba(120,30,70,0.06) 0%, transparent 70%);
-            animation: nebulaDrift1 60s ease-in-out infinite alternate;
-        }
-        .nebula-2 {
-            background: radial-gradient(ellipse 50% 40% at 65% 55%, rgba(30,20,100,0.08) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 50% at 35% 45%, rgba(10,60,80,0.06) 0%, transparent 70%);
-            animation: nebulaDrift2 45s ease-in-out infinite alternate;
-        }
+    background: radial-gradient(ellipse 60% 40% at 25% 55%, rgba(80,20,120,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 75% 35%, rgba(20,60,140,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 55% 75%, rgba(120,30,70,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 35% 30%, rgba(30,60,150,0.10) 0%, rgba(20,40,120,0.06) 30%, transparent 65%),
+        radial-gradient(ellipse 30% 40% at 65% 65%, rgba(50,30,130,0.08) 0%, rgba(30,50,120,0.05) 25%, transparent 60%);
+    animation: nebulaDrift1 60s ease-in-out infinite alternate;
+}
+.nebula-2 {
+    background: radial-gradient(ellipse 50% 40% at 65% 55%, rgba(25,40,120,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 35% 45%, rgba(10,60,100,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 35% at 55% 25%, rgba(60,40,130,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 30% at 20% 60%, rgba(20,50,130,0.08) 0%, rgba(15,35,100,0.04) 35%, transparent 65%),
+        radial-gradient(ellipse 30% 45% at 80% 45%, rgba(40,60,150,0.07) 0%, transparent 60%);
+    animation: nebulaDrift2 45s ease-in-out infinite alternate;
+}
         @keyframes nebulaDrift1 { 0%{transform:translate(0,0) scale(1);opacity:0.8} 100%{transform:translate(-20px,15px) scale(0.95);opacity:1} }
         @keyframes nebulaDrift2 { 0%{transform:translate(0,0) rotate(0deg)} 100%{transform:translate(-30px,20px) rotate(2deg)} }
 
@@ -162,24 +172,22 @@
             color: var(--gold-light); letter-spacing: 4px; font-weight: 600; }
         .reading-header p { font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px; font-weight: 300; }
 
-        .fan-container { position: relative; width: 100%; max-width: 700px; height: 320px; margin: 10px auto;
-            display: flex; align-items: flex-end; justify-content: center; }
-        .fan-card { position: absolute; bottom: 0; width: 70px; height: 110px; border-radius: 8px; cursor: pointer;
-            transform-origin: 50% 180%; transition: all 0.5s cubic-bezier(0.23,1,0.32,1);
-            border: 1px solid rgba(212,168,67,0.2); overflow: hidden; }
-        .fan-card .card-back-face { width: 100%; height: 100%; background: linear-gradient(145deg, #1a0a2e, #0d0620);
-            display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
-        .fan-card .card-back-face::before { content: ''; position: absolute; inset: 4px;
-            border: 1px solid rgba(212,168,67,0.12); border-radius: 5px; }
-        .fan-card .card-back-face .back-sym { font-size: 1.2rem; color: var(--gold); opacity: 0.4; }
-        .fan-card:hover { transform: var(--fan-transform) translateY(-25px) !important;
-            border-color: rgba(212,168,67,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(212,168,67,0.1);
-            z-index: 100 !important; }
-        .fan-card.drawn { opacity: 0.15; pointer-events: none; transform: var(--fan-transform) scale(0.9) !important; }
-        .fan-card.shuffling-anim { animation: fanShuffle 0.7s ease-in-out; }
-        @keyframes fanShuffle {
-            0%{transform:var(--fan-transform)} 30%{transform:translateX(var(--shuffle-x)) translateY(-80px) rotate(var(--shuffle-r))}
-            60%{transform:translateX(calc(var(--shuffle-x)*-0.5)) translateY(-40px) rotate(calc(var(--shuffle-r)*-0.3))} 100%{transform:var(--fan-transform)} }
+.fan-container { position: relative; width: 100%; max-width: 500px; height: 420px; margin: 10px auto;
+    display: flex; align-items: center; justify-content: center; }
+.circle-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center; color: var(--gold); z-index: 5; pointer-events: none; }
+.circle-center-text .big { font-size: 1.5rem; opacity: 0.15; display: block; }
+.circle-center-text .small { font-size: 0.6rem; letter-spacing: 3px; opacity: 0.3; margin-top: 4px; }
+.fan-card { position: absolute; width: 55px; height: 88px; border-radius: 7px; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23,1,0.32,1); overflow: hidden; }
+.fan-card canvas { width: 100%; height: 100%; display: block; border-radius: 7px; }
+.fan-card:hover { box-shadow: 0 0 25px rgba(212,168,67,0.2), 0 5px 20px rgba(0,0,0,0.4);
+    transform: var(--fan-transform) scale(1.18) !important; z-index: 100 !important; }
+.fan-card.drawn { opacity: 0.12; pointer-events: none; transform: var(--fan-transform) scale(0.85) !important; }
+.fan-card.shuffling-anim { animation: circleShuffle 0.7s ease-in-out; }
+@keyframes circleShuffle {
+    0%{transform:var(--fan-transform);opacity:1} 30%{transform:var(--fan-transform) scale(0.3);opacity:0.3}
+    60%{transform:var(--fan-transform) scale(1.1);opacity:0.8} 100%{transform:var(--fan-transform);opacity:1} }
 
         .shuffle-controls { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 5px 0 15px; }
         .shuffle-btn { padding: 13px 38px; border: 1px solid var(--gold); border-radius: 30px;
@@ -328,14 +336,14 @@
         @media (max-width: 768px) {
             .top-nav{padding:14px 16px} .nav-left,.nav-right{gap:14px} .nav-link{font-size:0.65rem}
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-            .fan-container{height:260px} .fan-card{width:55px;height:88px} .fan-card .back-sym{font-size:0.9rem}
+            .fan-container{height:360px;max-width:380px} .fan-card{width:45px;height:72px}
             .tarot-slot{width:80px;height:128px}
             .spread-celtic{grid-template-columns:85px 85px 85px 20px 85px;gap:5px}
             .spread-hexagram{width:280px;height:320px}
         }
         @media (max-width: 480px) {
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:10px} .spread-card{padding:20px 10px 16px}
-            .spread-card-desc{display:none} .fan-card{width:45px;height:72px}
+            .spread-card-desc{display:none} .fan-card{width:38px;height:60px} .fan-container{height:320px;max-width:330px}
             .tarot-slot{width:68px;height:108px} .spread-three{gap:15px}
         }
     </style>
@@ -436,6 +444,67 @@
 // ============================================
 // IMAGE URL BASE - Your GitHub repository
 // ============================================
+// ============================================
+// CARD BACK DRAWING ENGINE
+// ============================================
+function drawCardBack(canvas, w, h) {
+    canvas.width = w; canvas.height = h;
+    const c = canvas.getContext('2d');
+    const bg = c.createLinearGradient(0,0,w,h);
+    bg.addColorStop(0,'#0d0628'); bg.addColorStop(0.5,'#10082e'); bg.addColorStop(1,'#080420');
+    c.fillStyle = bg; c.fillRect(0,0,w,h);
+    const glow = c.createRadialGradient(w/2,h/2,0,w/2,h/2,w*0.7);
+    glow.addColorStop(0,'rgba(120,80,180,0.08)'); glow.addColorStop(0.5,'rgba(80,50,140,0.04)'); glow.addColorStop(1,'transparent');
+    c.fillStyle = glow; c.fillRect(0,0,w,h);
+    const goldDim = 'rgba(212,168,67,0.25)', goldFaint = 'rgba(212,168,67,0.12)';
+    c.strokeStyle = goldDim; c.lineWidth = 1.5; rrect(c,4,4,w-8,h-8,6); c.stroke();
+    c.strokeStyle = goldFaint; c.lineWidth = 0.8; rrect(c,9,9,w-18,h-18,4); c.stroke();
+    [[16,16],[w-16,16],[16,h-16],[w-16,h-16]].forEach(([cx,cy])=>{
+        c.save(); c.translate(cx,cy); c.rotate(Math.PI/4);
+        c.strokeStyle=goldDim; c.lineWidth=0.8; c.strokeRect(-3.5,-3.5,7,7);
+        c.fillStyle='rgba(212,168,67,0.15)'; c.fillRect(-2,-2,4,4); c.restore();
+        c.strokeStyle='rgba(212,168,67,0.06)'; c.lineWidth=0.5;
+        c.beginPath(); c.moveTo(cx,cy); c.lineTo(w/2,h/2); c.stroke();
+    });
+    const circR = Math.min(w,h)*0.26;
+    c.strokeStyle=goldDim; c.lineWidth=1; c.beginPath(); c.arc(w/2,h/2,circR,0,Math.PI*2); c.stroke();
+    c.strokeStyle='rgba(212,168,67,0.15)'; c.lineWidth=0.6; c.beginPath(); c.arc(w/2,h/2,circR*0.77,0,Math.PI*2); c.stroke();
+    const cg = c.createRadialGradient(w/2,h/2,0,w/2,h/2,circR*0.46);
+    cg.addColorStop(0,'rgba(212,168,67,0.12)'); cg.addColorStop(1,'rgba(212,168,67,0.02)');
+    c.fillStyle=cg; c.beginPath(); c.arc(w/2,h/2,circR*0.46,0,Math.PI*2); c.fill();
+    const starR = circR * 0.5;
+    c.save(); c.translate(w/2,h/2);
+    for(let i=0;i<8;i++){const a=(Math.PI*2*i)/8,oR=starR*(i%2===0?2.0:1.2);
+        c.strokeStyle=i%2===0?'rgba(212,168,67,0.2)':'rgba(212,168,67,0.1)'; c.lineWidth=i%2===0?0.8:0.5;
+        c.beginPath(); c.moveTo(Math.cos(a)*starR*0.5,Math.sin(a)*starR*0.5);
+        c.lineTo(Math.cos(a)*oR,Math.sin(a)*oR); c.stroke();}
+    c.fillStyle='rgba(212,168,67,0.3)'; c.strokeStyle=goldDim; c.lineWidth=0.8; c.beginPath();
+    for(let i=0;i<16;i++){const a=(Math.PI*2*i)/16-Math.PI/2,r=i%2===0?starR:starR*0.4;
+        c[i===0?'moveTo':'lineTo'](Math.cos(a)*r,Math.sin(a)*r);}
+    c.closePath(); c.fill(); c.stroke();
+    c.fillStyle='rgba(240,214,138,0.7)'; c.beginPath(); c.arc(0,0,2,0,Math.PI*2); c.fill();
+    c.restore();
+    [28,h-28].forEach(yy=>{
+        c.fillStyle='rgba(212,168,67,0.3)'; c.beginPath(); c.arc(w/2,yy,6,0,Math.PI*2); c.fill();
+        c.save(); c.globalCompositeOperation='destination-out';
+        c.beginPath(); c.arc(w/2+2.1,yy,5.1,0,Math.PI*2); c.fill(); c.restore();
+        c.strokeStyle='rgba(212,168,67,0.2)'; c.lineWidth=0.5; c.beginPath(); c.arc(w/2,yy,6,0,Math.PI*2); c.stroke();
+    });
+    c.strokeStyle=goldFaint; c.lineWidth=0.5;
+    [[0.2,38,0.38,38],[0.62,38,0.8,38],[0.2,h-38,0.38,h-38],[0.62,h-38,0.8,h-38]].forEach(([x1,y1,x2,y2])=>{
+        c.beginPath(); c.moveTo(w*x1,y1); c.lineTo(w*x2,y2); c.stroke();});
+    for(let i=0;i<12;i++){const a=(Math.PI*2*i)/12-Math.PI/2,dx=w/2+Math.cos(a)*circR,dy=h/2+Math.sin(a)*circR;
+        c.save(); c.translate(dx,dy); c.rotate(a+Math.PI/2);
+        c.fillStyle=i%3===0?'rgba(212,168,67,0.4)':'rgba(212,168,67,0.15)';
+        const ds=i%3===0?2.5:1.5; c.beginPath(); c.moveTo(0,-ds); c.lineTo(ds*0.6,0); c.lineTo(0,ds); c.lineTo(-ds*0.6,0);
+        c.closePath(); c.fill(); c.restore();}
+    c.globalAlpha=0.015;
+    for(let y=12;y<h-12;y+=4)for(let x=12;x<w-12;x+=4)if(Math.random()>0.85){c.fillStyle='#d4a843';c.fillRect(x,y,0.5,0.5);}
+    c.globalAlpha=1;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
+    c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
+    c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
 const IMG_BASE = 'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/';
 
 function getCardImageUrl(cardId) {
@@ -649,14 +718,24 @@ function startReading(type){
 }
 function buildFan(){
     const ct=document.getElementById('fanContainer');ct.innerHTML='';
-    const total=Math.min(deck.length,40),spread=120,start=-spread/2;
-    for(let i=0;i<total;i++){const c=document.createElement('div');c.className='fan-card';c.setAttribute('data-fan-index',i);
-        const angle=start+(spread/(total-1))*i,tf=`rotate(${angle}deg)`;
-        c.style.setProperty('--fan-transform',tf);c.style.setProperty('--shuffle-x',`${(Math.random()-0.5)*120}px`);
-        c.style.setProperty('--shuffle-r',`${(Math.random()-0.5)*40}deg`);c.style.transform=tf;
-        c.style.zIndex=i<total/2?i:total-i;
-        c.innerHTML=`<div class="card-back-face"><span class="back-sym">☽</span></div>`;
-        c.addEventListener('click',()=>onFanCardClick(i));ct.appendChild(c);}
+    const total=Math.min(deck.length,40);
+    const containerSize=ct.offsetWidth||420;
+    const centerX=containerSize/2, centerY=ct.offsetHeight/2||210;
+    const cardW=55, cardH=88;
+    const radius=Math.min(containerSize,ct.offsetHeight||420)*0.38;
+    ct.innerHTML='<div class="circle-center-text"><span class="big">☽</span><span class="small">选择感应到的牌</span></div>';
+    for(let i=0;i<total;i++){
+        const angle=(Math.PI*2*i/total)-Math.PI/2;
+        const x=centerX+Math.cos(angle)*radius-cardW/2;
+        const y=centerY+Math.sin(angle)*radius-cardH/2;
+        const rot=(angle*180/Math.PI)+90;
+        const card=document.createElement('div');card.className='fan-card';card.setAttribute('data-fan-index',i);
+        const tf=`translate(${x}px,${y}px) rotate(${rot}deg)`;
+        card.style.setProperty('--fan-transform',tf);card.style.transform=tf;
+        card.style.zIndex=i<total/2?i+1:total-i+1;
+        const cvs=document.createElement('canvas');drawCardBack(cvs,110,176);card.appendChild(cvs);
+        card.addEventListener('click',()=>onFanCardClick(i));ct.appendChild(card);
+    }
 }
 function doShuffle(){
     deck=deck.map(c=>({...c,isReversed:Math.random()<0.5}));shuffleArray(deck);
@@ -759,14 +838,18 @@ function deleteHistory(id){let h=JSON.parse(localStorage.getItem('tarotHistory')
 // ===== STARFIELD + AURORA =====
 const starCanvas=document.getElementById('starfield'),starCtx=starCanvas.getContext('2d');
 const auroraCanvas=document.getElementById('auroraCanvas'),auroraCtx=auroraCanvas.getContext('2d');
-let stars=[],shootingStars=[],mouseX=innerWidth/2,mouseY=innerHeight/2;
+let stars=[],shootingStars=[],starClusters=[],mouseX=innerWidth/2,mouseY=innerHeight/2;
 
 function resize(){starCanvas.width=auroraCanvas.width=innerWidth;starCanvas.height=auroraCanvas.height=innerHeight;initStars();}
-function initStars(){stars=[];const c=Math.floor((innerWidth*innerHeight)/2500);for(let i=0;i<c;i++)stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4+0.2,o:Math.random()*0.8+0.2,speed:Math.random()*0.015+0.003,phase:Math.random()*Math.PI*2,layer:Math.floor(Math.random()*3),hue:Math.random()>0.7?(Math.random()>0.5?220:40):0});}
+function initStars(){stars=[];const c=Math.floor((innerWidth*innerHeight)/1200);
+    for(let i=0;i<c;i++)stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.6+0.15,o:Math.random()*0.85+0.15,speed:Math.random()*0.015+0.003,phase:Math.random()*Math.PI*2,layer:Math.floor(Math.random()*3),hue:Math.random()>0.6?[210,230,40,270,190][Math.floor(Math.random()*5)]:0});
+    starClusters=[];const cc=Math.floor(c*0.15);
+    for(let i=0;i<cc;i++){const t=Math.random(),cx=innerWidth*(0.1+t*0.8),cy=innerHeight*(0.15+t*0.5)+(Math.random()-0.5)*innerHeight*0.2;
+        starClusters.push({x:cx+(Math.random()-0.5)*80,y:cy+(Math.random()-0.5)*60,r:Math.random()*0.8+0.1,o:Math.random()*0.5+0.1,speed:Math.random()*0.01+0.002,phase:Math.random()*Math.PI*2});}}
 
 function drawAurora(t){
     auroraCtx.clearRect(0,0,auroraCanvas.width,auroraCanvas.height);const w=auroraCanvas.width,h=auroraCanvas.height;
-    for(let b=0;b<3;b++){const by=h*(0.15+b*0.12),hu=[160,200,280][b],al=[0.025,0.02,0.015][b];
+    for(let b=0;b<4;b++){const by=h*(0.12+b*0.1),hu=[160,200,230,280][b],al=[0.025,0.022,0.018,0.015][b];
         auroraCtx.beginPath();auroraCtx.moveTo(0,h);
         for(let x=0;x<=w;x+=4){const n=x/w,y=by+Math.sin(n*3+t*0.0003+b)*40+Math.sin(n*5-t*0.0005+b*2)*25+Math.sin(n*1.5+t*0.0002)*60;auroraCtx.lineTo(x,y);}
         auroraCtx.lineTo(w,h);auroraCtx.closePath();
@@ -781,18 +864,27 @@ function drawAurora(t){
 
 function renderStars(t){
     starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
+    const mg=starCtx.createLinearGradient(0,0,starCanvas.width,starCanvas.height);
+    mg.addColorStop(0,'rgba(100,80,180,0.008)');mg.addColorStop(0.25,'rgba(80,100,200,0.012)');
+    mg.addColorStop(0.5,'rgba(150,130,220,0.018)');mg.addColorStop(0.75,'rgba(80,110,200,0.012)');
+    mg.addColorStop(1,'rgba(100,80,150,0.008)');starCtx.fillStyle=mg;starCtx.fillRect(0,0,starCanvas.width,starCanvas.height);
     stars.forEach(s=>{const tw=Math.sin(t*s.speed+s.phase)*0.35+0.65,px=(mouseX-innerWidth/2)*(s.layer+1)*0.0015,py=(mouseY-innerHeight/2)*(s.layer+1)*0.0015,x=s.x+px,y=s.y+py;
         starCtx.beginPath();starCtx.arc(x,y,s.r*tw,0,Math.PI*2);
         starCtx.fillStyle=s.hue?`hsla(${s.hue},60%,85%,${s.o*tw})`:`rgba(255,255,255,${s.o*tw})`;starCtx.fill();
-        if(s.r>1.1){const g=starCtx.createRadialGradient(x,y,0,x,y,s.r*3);g.addColorStop(0,`rgba(220,220,255,${0.08*tw})`);g.addColorStop(1,'rgba(220,220,255,0)');starCtx.beginPath();starCtx.arc(x,y,s.r*3,0,Math.PI*2);starCtx.fillStyle=g;starCtx.fill();}});
-    if(Math.random()<0.002)shootingStars.push({x:Math.random()*innerWidth*0.8,y:Math.random()*innerHeight*0.4,len:Math.random()*100+40,spd:Math.random()*7+3,angle:Math.PI/4+(Math.random()-0.5)*0.4,opacity:1});
+        if(s.r>1.2){const g=starCtx.createRadialGradient(x,y,0,x,y,s.r*4);
+            g.addColorStop(0,s.hue?`hsla(${s.hue},50%,80%,${0.1*tw})`:`rgba(220,220,255,${0.1*tw})`);
+            g.addColorStop(1,'rgba(220,220,255,0)');starCtx.beginPath();starCtx.arc(x,y,s.r*4,0,Math.PI*2);starCtx.fillStyle=g;starCtx.fill();}
+        if(s.r>1.4&&s.o>0.6){const sl=s.r*6*tw;starCtx.strokeStyle=`rgba(255,255,255,${0.08*tw})`;starCtx.lineWidth=0.5;
+            starCtx.beginPath();starCtx.moveTo(x-sl,y);starCtx.lineTo(x+sl,y);starCtx.moveTo(x,y-sl);starCtx.lineTo(x,y+sl);starCtx.stroke();}});
+    starClusters.forEach(s=>{const tw=Math.sin(t*s.speed+s.phase)*0.3+0.7;starCtx.beginPath();starCtx.arc(s.x,s.y,s.r*tw,0,Math.PI*2);
+        starCtx.fillStyle=`rgba(190,185,230,${s.o*tw})`;starCtx.fill();});
+    if(Math.random()<0.003)shootingStars.push({x:Math.random()*innerWidth*0.8,y:Math.random()*innerHeight*0.4,len:Math.random()*120+50,spd:Math.random()*7+3,angle:Math.PI/4+(Math.random()-0.5)*0.4,opacity:1});
     shootingStars=shootingStars.filter(ss=>{ss.x+=Math.cos(ss.angle)*ss.spd;ss.y+=Math.sin(ss.angle)*ss.spd;ss.opacity-=0.012;if(ss.opacity<=0)return false;
         const g=starCtx.createLinearGradient(ss.x,ss.y,ss.x-Math.cos(ss.angle)*ss.len,ss.y-Math.sin(ss.angle)*ss.len);
         g.addColorStop(0,`rgba(255,255,255,${ss.opacity})`);g.addColorStop(1,'rgba(255,255,255,0)');
         starCtx.beginPath();starCtx.moveTo(ss.x,ss.y);starCtx.lineTo(ss.x-Math.cos(ss.angle)*ss.len,ss.y-Math.sin(ss.angle)*ss.len);
         starCtx.strokeStyle=g;starCtx.lineWidth=1.2;starCtx.stroke();
-        starCtx.beginPath();starCtx.arc(ss.x,ss.y,1.5,0,Math.PI*2);starCtx.fillStyle=`rgba(255,255,255,${ss.opacity})`;starCtx.fill();return true;});
-}
+        starCtx.beginPath();starCtx.arc(ss.x,ss.y,1.5,0,Math.PI*2);starCtx.fillStyle=`rgba(255,255,255,${ss.opacity})`;starCtx.fill();return true;});}
 
 function animate(t){renderStars(t);drawAurora(t);requestAnimationFrame(animate);}
 function createParticles(){const c=document.getElementById('floating-particles');for(let i=0;i<12;i++){const p=document.createElement('div');p.className='floating-particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*10+'s';p.style.animationDuration=(Math.random()*8+8)+'s';const s=Math.random()*2+1;p.style.width=s+'px';p.style.height=s+'px';c.appendChild(p);}}
