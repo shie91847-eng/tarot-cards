@@ -446,6 +446,24 @@
 // ============================================
 // CARD BACK DRAWING ENGINE
 // ============================================
+// ===== BGM =====
+let bgmAudio = null;
+function initBGM() {
+    if (bgmAudio) return;
+    bgmAudio = new Audio('https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/bgm.mp3');
+    bgmAudio.loop = true;
+    bgmAudio.volume = 0.3;
+}
+function startBGM() {
+    initBGM();
+    bgmAudio.play().catch(()=>{});
+}
+function stopBGM() {
+    if (bgmAudio) {
+        bgmAudio.pause();
+        bgmAudio.currentTime = 0;
+    }
+}
 function drawCardBack(canvas, w, h) {
     canvas.width = w; canvas.height = h;
     const c = canvas.getContext('2d');
@@ -694,7 +712,7 @@ function playSfx(type){
     else if(type==='flip'){const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=800;o.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.05);g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3);o.connect(g);o.start();o.stop(audioCtx.currentTime+0.3);}
     else if(type==='complete'){[523.25,659.25,783.99].forEach((f,i)=>{const o=audioCtx.createOscillator(),gg=audioCtx.createGain();o.type='sine';o.frequency.value=f;gg.gain.value=0;gg.gain.linearRampToValueAtTime(0.04,audioCtx.currentTime+0.1+i*0.15);gg.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1.5+i*0.15);o.connect(gg);gg.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*0.15);o.stop(audioCtx.currentTime+2);});}
 }
-function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundToggle');b.textContent=soundOn?'🔊':'🔇';b.classList.toggle('active',soundOn);if(soundOn){initAudio();startAmbientSound();}else stopAmbientSound();}
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundToggle');b.textContent=soundOn?'🔊':'🔇';b.classList.toggle('active',soundOn);if(soundOn){startBGM();}else{stopBGM();}}
 
 // ===== READING =====
 function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
