@@ -964,9 +964,7 @@ function createParticles(){const c=document.getElementById('floating-particles')
 
 // ===== AI 星谕 =====
 const AI_WORKER = 'https://api.siliconflow.cn/v1/chat/completions';
-const AI_KEY = '
-sk-ienximaaeiyfmtcdeilqbynkwkujyxarqdxjwmqtnoarmdkv
-';
+const AI_KEY = 'sk-ienximaaeiyfmtcdeilqbynkwkujyxarqdxjwmqtnoarmdkv';
 let aiMessages = [];
 let aiLoading = false;
 
@@ -1043,8 +1041,8 @@ async function callAI() {
     try {
         const res = await fetch(AI_WORKER, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: aiMessages })
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_KEY },
+    body: JSON.stringify({ model: 'deepseek-ai/DeepSeek-V3', messages: aiMessages, temperature: 0.8, max_tokens: 2000, stream: false })
 });
         
         const data = await res.json();
