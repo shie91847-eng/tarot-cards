@@ -571,16 +571,32 @@ function drawCardBack(canvas, w, h) {
 function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
     c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
     c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
-const IMG_CDN = 'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@latest/';
-const IMG_RAW = 'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/';
+const IMG_SOURCES = [
+    'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@latest/',
+    'https://raw.gitmirror.com/shie91847-eng/tarot-cards/main/',
+    'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/'
+];
+let bestSource = IMG_SOURCES[0];
 
 function getCardImageUrl(cardId) {
-    return IMG_CDN + cardId + '.png';
+    return bestSource + cardId + '.png';
 }
 function getCardImageUrlFallback(cardId) {
-    return IMG_RAW + cardId + '.png';
+    return IMG_SOURCES[2] + cardId + '.png';
 }
 
+// 自动检测最快的图片源
+(function detectFastestSource() {
+    let resolved = false;
+    IMG_SOURCES.forEach(src => {
+        const img = new Image();
+        const start = Date.now();
+        img.onload = () => {
+            if (!resolved) { resolved = true; bestSource = src; }
+        };
+        img.src = src + '0.png?' + Date.now();
+    });
+})();
 // ============================================
 // TAROT DATA
 // ============================================
