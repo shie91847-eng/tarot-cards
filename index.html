@@ -1084,10 +1084,15 @@ function resetAIChat() {
     const msgBox = document.getElementById('aiMessages');
     if (msgBox) msgBox.innerHTML = '';
 }    
-// ===== 预加载所有图片 =====
-setTimeout(() => {
-    for (let i = 0; i < 78; i++) { const img = new Image(); img.src = getCardImageUrl(i); }
-}, 2000);
+// ===== 预加载图片（分批，不抢带宽）=====
+function preloadBatch(start, end) {
+    if (start >= end) return;
+    const img = new Image();
+    img.src = getCardImageUrl(start);
+    img.onload = img.onerror = () => { setTimeout(() => preloadBatch(start + 1, end), 100); };
+}
+setTimeout(() => preloadBatch(0, 22), 3000);
+setTimeout(() => preloadBatch(22, 78), 15000);
 // ===== INIT =====
 window.addEventListener('resize',resize);
 window.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
