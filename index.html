@@ -847,18 +847,25 @@ function onFanCardClick(fi){
         const orient=front.querySelector('.card-orient');
 
         // ★ 使用真实图片替代 canvas ★
-        ic.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
-        const img = document.createElement('img');
-        img.alt = card.name;
-        let tryIdx = 0;
-        function tryLoad() {
-        if (tryIdx >= IMG_SOURCES.length) { ic.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">点击重试</div>'; ic.onclick = () => { tryIdx=0; tryLoad(); }; return; }
-        img.src = IMG_SOURCES[tryIdx] + card.id + '.png';
+function loadCardImg(container, cardId) {
+    container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
+    container.onclick = null;
+    let tryIdx = 0;
+    function attempt() {
+        if (tryIdx >= IMG_SOURCES.length) {
+            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;">点击重试</div>';
+            container.onclick = () => loadCardImg(container, cardId);
+            return;
+        }
+        const img = new Image();
+        img.src = IMG_SOURCES[tryIdx] + cardId + '.png?' + Date.now();
         tryIdx++;
+        img.onload = () => { container.innerHTML = ''; container.onclick = null; container.appendChild(img); };
+        img.onerror = () => { attempt(); };
     }
-        img.onload = function() { ic.innerHTML = ''; ic.onclick = null; ic.appendChild(img); };
-        img.onerror = function() { tryLoad(); };
-        tryLoad();
+    attempt();
+}
+loadCardImg(ic, card.id);
         title.textContent=card.name;
         orient.textContent=card.isReversed?'逆位 ↓':'正位 ↑';
         orient.className='card-orient '+(card.isReversed?'reversed':'upright');
