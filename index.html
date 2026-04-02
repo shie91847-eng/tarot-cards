@@ -963,7 +963,10 @@ function animate(t){renderStars(t);drawAurora(t);requestAnimationFrame(animate);
 function createParticles(){const c=document.getElementById('floating-particles');for(let i=0;i<12;i++){const p=document.createElement('div');p.className='floating-particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*10+'s';p.style.animationDuration=(Math.random()*8+8)+'s';const s=Math.random()*2+1;p.style.width=s+'px';p.style.height=s+'px';c.appendChild(p);}}
 
 // ===== AI 星谕 =====
-const AI_WORKER = 'https://tarot-ai.shie91847.workers.dev';
+const AI_WORKER = 'https://api.siliconflow.cn/v1/chat/completions';
+const AI_KEY = '
+sk-ienximaaeiyfmtcdeilqbynkwkujyxarqdxjwmqtnoarmdkv
+';
 let aiMessages = [];
 let aiLoading = false;
 
@@ -1039,10 +1042,10 @@ async function callAI() {
     
     try {
         const res = await fetch(AI_WORKER, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: aiMessages })
-        });
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: aiMessages })
+});
         
         const data = await res.json();
         removeLoading();
@@ -1083,6 +1086,10 @@ function resetAIChat() {
     const msgBox = document.getElementById('aiMessages');
     if (msgBox) msgBox.innerHTML = '';
 }    
+// ===== 预加载所有图片 =====
+setTimeout(() => {
+    for (let i = 0; i < 78; i++) { const img = new Image(); img.src = getCardImageUrl(i); }
+}, 2000);
 // ===== INIT =====
 window.addEventListener('resize',resize);
 window.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
