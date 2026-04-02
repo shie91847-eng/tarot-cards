@@ -172,7 +172,7 @@
             color: var(--gold-light); letter-spacing: 4px; font-weight: 600; }
         .reading-header p { font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px; font-weight: 300; }
 
-.fan-container { position: relative; width: 420px; height: 420px; margin: 10px auto; }
+.fan-container { position: relative; width: 90vw; max-width: 420px; height: 90vw; max-height: 420px; margin: 10px auto; }
 .circle-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     text-align: center; color: var(--gold); z-index: 5; pointer-events: none; }
 .circle-center-text .big { font-size: 1.5rem; opacity: 0.15; display: block; }
@@ -335,14 +335,14 @@
         @media (max-width: 768px) {
             .top-nav{padding:14px 16px} .nav-left,.nav-right{gap:14px} .nav-link{font-size:0.65rem}
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-            .fan-container{width:340px;height:340px} .fan-card{width:45px;height:72px}
+            .fan-card{width:45px;height:72px}
             .tarot-slot{width:80px;height:128px}
             .spread-celtic{grid-template-columns:85px 85px 85px 20px 85px;gap:5px}
             .spread-hexagram{width:280px;height:320px}
         }
         @media (max-width: 480px) {
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:10px} .spread-card{padding:20px 10px 16px}
-            .spread-card-desc{display:none} .fan-card{width:38px;height:60px} .fan-container{width:300px;height:300px}
+            .spread-card-desc{display:none} .fan-card{width:38px;height:60px}
             .tarot-slot{width:68px;height:108px} .spread-three{gap:15px}
         }
     </style>
@@ -718,9 +718,11 @@ function startReading(type){
 function buildFan(){
     const ct=document.getElementById('fanContainer');ct.innerHTML='';
     const total=Math.min(deck.length,40);
-    const size=420, cardW=55, cardH=88;
+    const size=Math.min(420, window.innerWidth*0.9);
+    const cardW=size*0.131, cardH=size*0.21;
     const centerX=size/2, centerY=size/2;
     const radius=(size-cardH)/2-10;
+ct.style.width=size+'px'; ct.style.height=size+'px';
     ct.innerHTML='<div class="circle-center-text"><span class="big">☽</span><span class="small">选择感应到的牌</span></div>';
     for(let i=0;i<total;i++){
         const angle=(Math.PI*2*i/total)-Math.PI/2;
