@@ -522,10 +522,14 @@ function drawCardBack(canvas, w, h) {
 function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
     c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
     c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
-const IMG_BASE = 'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/';
+const IMG_CDN = 'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/';
+const IMG_RAW = 'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/';
 
 function getCardImageUrl(cardId) {
-    return IMG_BASE + cardId + '.png';
+    return IMG_CDN + cardId + '.png';
+}
+function getCardImageUrlFallback(cardId) {
+    return IMG_RAW + cardId + '.png';
 }
 
 // ============================================
@@ -778,13 +782,15 @@ function onFanCardClick(fi){
         const orient=front.querySelector('.card-orient');
 
         // ★ 使用真实图片替代 canvas ★
+        ic.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
         const img = document.createElement('img');
         img.src = getCardImageUrl(card.id);
         img.alt = card.name;
-        img.loading = 'lazy';
-        ic.innerHTML = '';
-        ic.appendChild(img);
-
+        img.onload = function() { ic.innerHTML = ''; ic.appendChild(img); };
+        img.onerror = function() {
+            img.onerror = null;
+            img.src = getCardImageUrlFallback(card.id);
+};
         title.textContent=card.name;
         orient.textContent=card.isReversed?'逆位 ↓':'正位 ↑';
         orient.className='card-orient '+(card.isReversed?'reversed':'upright');
@@ -829,7 +835,7 @@ function showInterp(){
         const kw=card.isReversed?card.reversed:card.upright,desc=card.isReversed?card.reversedDesc:card.uprightDesc;
         const div=document.createElement('div');div.className='interp-card';div.style.animationDelay=`${idx*0.1}s`;
         const imgUrl = getCardImageUrl(card.id);
-        div.innerHTML=`<div class="interp-header"><div class="interp-thumb"><img src="${imgUrl}" alt="${card.name}"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
+        div.innerHTML=`<div class="interp-header"><div class="interp-thumb"><img src="${imgUrl}" alt="${card.name}" onerror="this.onerror=null;this.src=getCardImageUrlFallback(${card.id})"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
         area.appendChild(div);
     });
     area.scrollIntoView({behavior:'smooth',block:'start'});
