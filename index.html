@@ -375,6 +375,115 @@
             .spread-celtic{grid-template-columns:85px 85px 85px 20px 85px;gap:5px}
             .spread-hexagram{width:280px;height:320px}
         }
+        /* ===== 答案之书样式 ===== */
+.book-section { margin: 30px 0 25px; }
+.book-section-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(180,140,220,0.5); margin-bottom: 14px; text-align: center; }
+.book-ask-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.book-ask-btn { position: relative; width: 90px; height: 90px; border-radius: 50%;
+    border: 1.5px solid rgba(180,140,220,0.35); background: radial-gradient(circle at 38% 35%, rgba(100,60,180,0.2), rgba(50,30,100,0.15));
+    cursor: pointer; transition: all 0.5s cubic-bezier(0.23,1,0.32,1);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 0 30px rgba(180,140,220,0.1), 0 8px 30px rgba(0,0,0,0.35); overflow: hidden; }
+.book-ask-btn::before { content: ''; position: absolute; inset: 4px; border-radius: 50%;
+    border: 1px solid rgba(180,140,220,0.1); }
+.book-ask-btn::after { content: ''; position: absolute; inset: -50%;
+    background: conic-gradient(from 0deg, transparent, rgba(180,140,220,0.06), transparent, rgba(180,140,220,0.06), transparent);
+    animation: bookRotate 10s linear infinite; }
+@keyframes bookRotate { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+.book-ask-btn:hover { transform: scale(1.1); border-color: rgba(180,140,220,0.6);
+    box-shadow: 0 0 50px rgba(180,140,220,0.2), 0 12px 40px rgba(0,0,0,0.4); }
+.book-ask-btn:active { transform: scale(0.95); }
+.book-ask-btn .ring { position: absolute; inset: 0; border-radius: 50%;
+    border: 1px solid rgba(180,140,220,0); animation: ringPulse 2.5s ease-out infinite; }
+.book-ask-btn .ring:nth-child(2) { animation-delay: 0.8s }
+.book-ask-btn .ring:nth-child(3) { animation-delay: 1.6s }
+@keyframes ringPulse { 0%{transform:scale(1);border-color:rgba(180,140,220,0.25)} 100%{transform:scale(1.9);border-color:rgba(180,140,220,0)} }
+.book-ask-btn .btn-icon { font-size: 1.5rem; position: relative; z-index: 2; filter: drop-shadow(0 0 10px rgba(180,140,220,0.4)); }
+.book-ask-btn .btn-text { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 3px;
+    color: rgba(200,180,240,0.8); position: relative; z-index: 2; margin-top: 2px; }
+.book-hint { font-size: 0.68rem; color: var(--text-secondary); opacity: 0.45; font-weight: 300; text-align: center; line-height: 1.7; }
+
+/* 答案弹窗 */
+.book-modal-overlay { display: none; position: fixed; inset: 0; z-index: 2000; align-items: center;
+    justify-content: center; background: rgba(3,0,20,0.9); backdrop-filter: blur(16px); }
+.book-modal-overlay.active { display: flex; }
+.book-modal-glow { position: absolute; width: 450px; height: 450px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(180,140,220,0.12) 0%, rgba(100,60,180,0.05) 40%, transparent 70%);
+    animation: answerGlow 3s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes answerGlow { 0%{transform:scale(0.9);opacity:0.6} 100%{transform:scale(1.15);opacity:1} }
+.book-modal { position: relative; max-width: 440px; width: 92%; text-align: center;
+    padding: 48px 32px 38px; border-radius: 26px;
+    background: linear-gradient(145deg, rgba(20,10,42,0.98), rgba(8,4,20,0.99));
+    border: 1px solid rgba(180,140,220,0.18); box-shadow: 0 35px 90px rgba(0,0,0,0.6), 0 0 50px rgba(180,140,220,0.08);
+    animation: bookModalIn 0.7s cubic-bezier(0.23,1,0.32,1) forwards; overflow: hidden; }
+@keyframes bookModalIn { 0%{opacity:0;transform:scale(0.55) translateY(50px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+.book-modal-stars { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.book-star { position: absolute; width: 3px; height: 3px; background: rgba(200,180,255,0.7); border-radius: 50%;
+    animation: starBurst 1.5s ease-out forwards }
+@keyframes starBurst { 0%{opacity:1;transform:scale(1) translateY(0)} 100%{opacity:0;transform:scale(0) translateY(-40px)} }
+.book-modal-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
+    border-radius: 50%; border: 1px solid rgba(180,140,220,0.15); background: rgba(180,140,220,0.05);
+    color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center; }
+.book-modal-close:hover { border-color: rgba(180,140,220,0.5); color: rgba(200,180,240,0.9); transform: rotate(90deg); }
+.book-modal-shimmer { position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(180,140,220,0.05), transparent);
+    animation: bookShimmer 5s ease-in-out infinite; pointer-events: none; }
+@keyframes bookShimmer { 0%{left:-100%} 50%{left:150%} 100%{left:-100%} }
+.book-modal-star { font-size: 2rem; margin-bottom: 14px; animation: starSpin 4s linear infinite; filter: drop-shadow(0 0 12px rgba(180,140,220,0.3)); }
+@keyframes starSpin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+.book-modal-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 4px;
+    color: rgba(180,140,220,0.4); margin-bottom: 22px; }
+.book-modal-answer { font-family: 'Noto Serif SC', serif; font-size: clamp(1.1rem,3.5vw,1.35rem);
+    color: var(--text-primary); line-height: 2.2; padding: 18px 5px; letter-spacing: 0.5px;
+    font-weight: 400; position: relative; z-index: 1; animation: answerReveal 1s ease forwards; }
+@keyframes answerReveal { 0%{opacity:0;transform:translateY(15px);letter-spacing:15px} 50%{opacity:0.6} 100%{opacity:1;transform:translateY(0);letter-spacing:0.5px} }
+.book-modal-divider { width: 60px; height: 1px; margin: 18px auto;
+    background: linear-gradient(90deg, transparent, rgba(180,140,220,0.28), transparent); }
+.book-modal-hint { font-size: 0.58rem; color: rgba(180,140,220,0.28); letter-spacing: 4px;
+    font-family: 'Cinzel', serif; margin-bottom: 22px; }
+.book-modal-again { padding: 11px 30px; border-radius: 25px; border: 1px solid rgba(180,140,220,0.22);
+    background: rgba(180,140,220,0.06); color: rgba(200,180,240,0.85);
+    font-family: 'Noto Serif SC', serif; font-size: 0.78rem; cursor: pointer; transition: all 0.3s; letter-spacing: 2px; }
+.book-modal-again:hover { background: rgba(180,140,220,0.14); border-color: rgba(180,140,220,0.5); transform: scale(1.04); }
+.book-modal-again:active { transform: scale(0.97); }
+.book-modal-guide { font-size: 0.72rem; color: var(--text-secondary); line-height: 2; font-weight: 300; margin-bottom: 18px; position: relative; z-index: 1; }
+
+/* 答案之书独立页面 */
+.book-page { display: none; flex-direction: column; align-items: center; min-height: 100vh; }
+.book-page.active { display: flex; }
+.book-page-hero { text-align: center; padding: 80px 20px 20px; }
+.book-page-moon { width: 50px; height: 50px; margin: 0 auto 18px; }
+.book-page-moon-inner { width: 100%; height: 100%; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(180,140,220,0.12), rgba(180,140,220,0.03));
+    border: 1px solid rgba(180,140,220,0.2); box-shadow: 0 0 25px rgba(180,140,220,0.08);
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: rgba(180,140,220,0.7);
+    animation: moonGlow 4s ease-in-out infinite alternate; }
+.book-page-title { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.8rem);
+    letter-spacing: 6px; color: rgba(200,180,240,0.9); margin-bottom: 6px; }
+.book-page-sub { font-family: 'Cormorant Garamond', serif; font-size: 0.8rem; letter-spacing: 3px;
+    color: var(--text-secondary); opacity: 0.4; }
+.book-page-divider { width: 130px; height: 1px; margin: 16px auto;
+    background: linear-gradient(90deg, transparent, rgba(180,140,220,0.25), transparent); }
+.book-page-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 2.2; font-weight: 300; max-width: 400px; }
+.book-page-ask { display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 24px 0 20px; }
+.book-page-btn { position: relative; width: 120px; height: 120px; border-radius: 50%;
+    border: 2px solid rgba(180,140,220,0.35); background: radial-gradient(circle at 38% 35%, rgba(100,60,180,0.2), rgba(50,30,100,0.15));
+    cursor: pointer; transition: all 0.5s cubic-bezier(0.23,1,0.32,1); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(180,140,220,0.12), 0 10px 40px rgba(0,0,0,0.35);
+    overflow: hidden; }
+.book-page-btn::before { content: ''; position: absolute; inset: 5px; border-radius: 50%; border: 1px solid rgba(180,140,220,0.1); }
+.book-page-btn::after { content: ''; position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent, rgba(180,140,220,0.07), transparent, rgba(180,140,220,0.07), transparent);
+    animation: bookRotate 10s linear infinite; }
+.book-page-btn:hover { transform: scale(1.1); border-color: rgba(180,140,220,0.6); box-shadow: 0 0 60px rgba(180,140,220,0.22), 0 15px 50px rgba(0,0,0,0.4); }
+.book-page-btn:active { transform: scale(0.95); }
+.book-page-btn .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(180,140,220,0); animation: ringPulse 2.5s ease-out infinite; }
+.book-page-btn .ring:nth-child(2) { animation-delay: 0.8s }
+.book-page-btn .ring:nth-child(3) { animation-delay: 1.6s }
+.book-page-btn .btn-icon { font-size: 1.8rem; position: relative; z-index: 2; filter: drop-shadow(0 0 12px rgba(180,140,220,0.4)); }
+.book-page-btn .btn-text { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 4px; color: rgba(200,180,240,0.85); position: relative; z-index: 2; margin-top: 4px; }
+.book-page-hint { font-size: 0.7rem; color: var(--text-secondary); opacity: 0.4; font-weight: 300; text-align: center; line-height: 2; }
         @media (max-width: 480px) {
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:10px} .spread-card{padding:20px 10px 16px}
             .spread-card-desc{display:none} .fan-card{width:38px;height:60px}
@@ -404,11 +513,32 @@
         <div class="nav-left">
             <span class="nav-brand" onclick="showHome()">✦ ARCANA</span>
             <a class="nav-link" onclick="showHome()">占卜</a>
+            <a class="nav-link" onclick="showBook()">答案之书</a>
             <a class="nav-link" onclick="showHistory()">记录</a>
         </div>
         <div class="nav-right">
             <button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="氛围音乐">🔇</button>
         </div>
+            <!-- 答案之书独立页面 -->
+        <section class="page book-page" id="bookPage">
+            <button class="back-btn" onclick="showHome()">← 返回</button>
+            <div class="book-page-hero">
+                <div class="book-page-moon"><div class="book-page-moon-inner">☽</div></div>
+                <h2 class="book-page-title">✦ 答案之书 ✦</h2>
+                <p class="book-page-sub">The Book of Answers</p>
+                <div class="book-page-divider"></div>
+                <p class="book-page-desc">静下心来，心中默念你的问题<br>然后，让命运为你揭晓答案</p>
+            </div>
+            <div class="book-page-ask">
+                <button class="book-page-btn" onclick="bookShowAnswer()">
+                    <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+                    <span class="btn-icon">✦</span>
+                    <span class="btn-text">询问</span>
+                </button>
+                <div class="book-page-hint">闭眼 · 深呼吸 · 默念问题 · 点击按钮</div>
+            </div>
+        </section>
+</nav>
     </nav>
 
     <section class="hero-section" id="homePage">
@@ -420,14 +550,28 @@
         <div class="hero-divider"></div>
         <p class="hero-description">在无垠的星河之下，古老的智慧正在低语<br>静心聆听，让塔罗揭示命运的织锦</p>
         <div class="deck-toggle-section">
-            <div class="section-label">选择牌组</div>
-            <div class="deck-toggle">
-                <button class="deck-option active" onclick="setDeck('major')" id="deckMajor">大阿卡纳 · 22张</button>
-                <button class="deck-option" onclick="setDeck('full')" id="deckFull">全牌 · 78张</button>
-            </div>
-        </div>
-        <div class="section-label" style="margin-bottom:14px;">选择牌阵</div>
-        <div class="spread-grid">
+    <div class="section-label">选择牌组</div>
+    <div class="deck-toggle">
+        <button class="deck-option active" onclick="setDeck('major')" id="deckMajor">大阿卡纳 · 22张</button>
+        <button class="deck-option" onclick="setDeck('full')" id="deckFull">全牌 · 78张</button>
+    </div>
+</div>
+
+<!-- 答案之书入口 -->
+<div class="book-section">
+    <div class="section-label" style="margin-bottom:14px;">✦ 答案之书 ✦</div>
+    <div class="book-ask-wrap">
+        <button class="book-ask-btn" onclick="bookShowAnswer()">
+            <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+            <span class="btn-icon">✦</span>
+            <span class="btn-text">询问</span>
+        </button>
+        <div class="book-hint">闭眼 · 默念问题 · 点击揭晓答案</div>
+    </div>
+</div>
+
+<div class="section-label" style="margin-bottom:14px;">选择牌阵</div>
+<div class="spread-grid">
             <div class="spread-card" onclick="startReading('single')"><div class="spread-card-icon">✧</div><div class="spread-card-name">每日一卡</div><div class="spread-card-count">1 CARD</div><div class="spread-card-desc">今日灵感指引</div></div>
             <div class="spread-card" onclick="startReading('three')"><div class="spread-card-icon">☽ ☀ ☾</div><div class="spread-card-name">时间之流</div><div class="spread-card-count">3 CARDS</div><div class="spread-card-desc">过去 · 现在 · 未来</div></div>
             <div class="spread-card" onclick="startReading('cross')"><div class="spread-card-icon">✚</div><div class="spread-card-name">十字牌阵</div><div class="spread-card-count">5 CARDS</div><div class="spread-card-desc">处境 · 障碍 · 建议</div></div>
@@ -462,6 +606,22 @@
         <h2 style="font-family:'Cinzel',serif;color:var(--gold-light);letter-spacing:4px;margin-bottom:30px;font-size:1.3rem;margin-top:80px;">✦ 占卜记录 ✦</h2>
         <div class="history-list" id="historyList"></div>
     </section>
+</div>
+<!-- 答案之书弹窗 -->
+<div class="book-modal-overlay" id="bookModal">
+    <div class="book-modal-glow"></div>
+    <div class="book-modal">
+        <div class="book-modal-stars" id="bookModalStars"></div>
+        <div class="book-modal-shimmer"></div>
+        <button class="book-modal-close" onclick="bookCloseModal()">✕</button>
+        <div class="book-modal-star">✦</div>
+        <div class="book-modal-label">✦ 命运的答案 ✦</div>
+        <div class="book-modal-guide">静下心来，心中默念你的问题<br>答案正在浮现……</div>
+        <div class="book-modal-answer" id="bookModalAnswer"></div>
+        <div class="book-modal-divider"></div>
+        <div class="book-modal-hint">✦ 答案已显现 ✦</div>
+        <button class="book-modal-again" onclick="bookShowAnswer()">再次询问 ↻</button>
+    </div>
 </div>
 <div class="ai-modal" id="aiModal">
     <div class="ai-header">
@@ -1110,6 +1270,148 @@ function resetAIChat() {
     const msgBox = document.getElementById('aiMessages');
     if (msgBox) msgBox.innerHTML = '';
 }    
+// ===== 答案之书数据 - 400条 =====
+const BOOK_ANSWERS = [
+    "是的，他在想你。","时机未到，耐心等待。","勇敢一点，幸福不会自己走来。",
+    "你们之间有特殊的缘分。","不要害怕表达你的心意。","这段关系值得你再给一次机会。",
+    "他会主动联系你的。","放下过去，新的故事正在开始。","你的真心终会被看见。",
+    "这是命中注定的相遇。","他在等你迈出第一步。","不要用理性去分析感情，跟随心走。",
+    "先学会爱自己，别人才会来爱你。","会有一个意想不到的人出现。","坦诚是打开心门的钥匙。",
+    "复合的可能性存在，但需要双方努力。","你正在吸引对的人。","有些事需要顺其自然。",
+    "你值得更好的。","暂时分离是为了更好的重逢。","相信你的第六感。",
+    "这是你一直在等待的机会。","相信自己，你的直觉很准。","机遇正在向你招手。",
+    "保持专注，你走在正确的道路上。","大胆尝试新事物。","你正处于转折点。",
+    "晋升的机会即将来临。","合作会带来意想不到的收获。","你需要更多的耐心。",
+    "新的项目即将开始。","你需要学会说不。","团队配合比个人能力更重要。",
+    "这是你一直在等待的机会。","保持热情，但也要务实。","答案就在你心里。",
+    "跟随你的直觉。","你比自己想象的更有智慧。","时间会给你答案。",
+    "不要想太多，做就是了。","问题本身就是答案。","跳出框框思考。",
+    "你需要换一个视角。","答案会自己出现的。","慢下来，深呼吸。",
+    "你正在正确的方向上前行。","答案会在你最意想不到的时候出现。","相信过程。",
+    "你的内心已经有答案了。","有时候放弃是一种智慧。","退一步海阔天空。",
+    "不要让恐惧控制你的决定。","一切都有它的道理。","答案是肯定的。",
+    "答案是否定的。","这取决于你自己的选择。","你正在学习一个重要的课题。",
+    "不要急于给事物贴标签。","你的判断是对的。","答案比你想象的简单。",
+    "相信奇迹会发生。","你正在被守护着。","因果循环，报应不爽。",
+    "你需要更多的勇气。","这是成长的代价。","不要重蹈覆辙。",
+    "你正在收获努力的果实。","一切皆有可能。","你需要接受现实。",
+    "这只是一个过渡期。","你正在被考验。","不要害怕与众不同。",
+    "这是生命的礼物。","你正在经历一个重要的时刻。","相信宇宙的安排。",
+    "你需要学会放手。","你比昨天更接近答案了。","不要被过去束缚。",
+    "这是一个新的开始。","你正在积累智慧。","答案在当下。",
+    "你正在变得更强。","不要让情绪影响判断。","你需要找到平衡。",
+    "不要害怕未知。","你正在接近目标。","美好的未来正在等着你。",
+    "意想不到的好事即将发生。","你将实现你的愿望。","下一个转角会有惊喜。",
+    "你的梦想会成真的。","好事即将发生。","你的人生即将迎来转机。",
+    "新的篇章即将展开。","你正在走向幸福。","最好的尚未到来。",
+    "惊喜正在路上。","你将克服所有困难。","黎明前的黑暗即将过去。",
+    "你的努力终将开花结果。","新的机遇即将出现。","你将找到内心的平静。",
+    "保持乐观，未来可期。","重要的变化即将到来。","你的人生将迎来新的高度。",
+    "不要放弃，美好的事物值得等待。","你正��创造自己的命运。","你的愿望会实现的。",
+    "更美好的日子即将到来。","你正在走向成熟。","你将收获满满的幸福。",
+    "你的坚持会有回报的。","你正在接近你的目标。","未来是光明的，保持信念。",
+    "你将遇到志同道合的人。","你正在书写自己的传奇。","意想不到的祝福即将到来。",
+    "你正在被宇宙眷顾。","新的旅程即将开始。","你将实现自我价值。",
+    "你正在成为更好的自己。","希望永远存在。","新的开始即将到来。",
+    "相信自己，你不会选错。","跟随你的心走。","你需要权衡利弊。",
+    "不要冲动，冷静思考。","相信你的第一直觉。","这个选择会带来成长。",
+    "选那个让你更勇敢的。","你需要更多信息。","选择你内心真正想要的。",
+    "勇敢踏出第一步。","暂时不做决定也可以。","选择快乐的那个。",
+    "不要被他人的意见左右。","听从内心的声音。","你已经有答案了。",
+    "这是一个重要的选择。","每一个选择都有意义。","选择你不会后悔的。",
+    "选择行动而非等待。","不要害怕失败。","选择爱而非恐惧。",
+    "这是一个双赢的选择。","选择真诚而非伪装。","答案就在你眼前。",
+    "这是一个艰难的选择，但你会做出正确的决定。","选择诚实面对自己。",
+    "相信命运会引导你。","这是一个改变命运的选择。","选择让你安心的。",
+    "不要害怕做出决定。","这个选择会让你自由。","选择当下而非完美。",
+    "这是一个值得冒险的选择。","你的选择是对的。","不要等待完美的时机。",
+    "一切都会好起来的。","你已经很棒了。","深呼吸，慢慢来。",
+    "你不是一个人。","一切都会过去的。","你值得被爱。",
+    "休息一下，你累了。","你比自己想象的坚强。","不要对自己太苛刻。",
+    "你正在做得很好了。","允许自己悲伤。","你值得幸福。",
+    "你并不孤单。","给自己一点时间。","你值得被珍惜。",
+    "阳光总在风雨后。","你正在被爱着。","你比自己以为的更好。",
+    "你正在成长。","给自己一个微笑。","乌云会散去的。",
+    "你值得拥有美好的事物。","不要放弃希望。","让过去成为过去。",
+    "你是独一无二的存在。","让自己喘口气。","痛苦是成长的养分。",
+    "你正在穿越风暴。","请善待自己。","你比自己想象的勇敢。",
+    "不要忘记你的价值。","保持希望。","你正在创造改变。",
+    "你是被需要的。","你正在变得更好。","让自己放松一下。",
+    "你值得被倾听。","不要忘记微笑。","你正在被宇宙眷顾。",
+    "给自己一些耐心。","你比自己以为的更强大。","让心安静下来。",
+    "你值得拥有平静。","你正在接近光明。","你是美丽的。",
+    "你正在被温柔以待。","信任是关系的基石。","行动胜于空谈。",
+    "简单才是真。","爱是唯一的答案。","万物皆有时。",
+    "活在当下。","种什么因，得什么果。","你的态度决定一切。",
+    "学会接受。","学会给予。","学会倾听。","学会说不。",
+    "学会原谅。","学会放手。","学会感恩。","学会等待。",
+    "学会相信。","这不是终点。","这只是过程。",
+    "你正在觉醒。","答案就在身边。","不要忽视直觉。",
+    "保持初心。","这是生命给你的礼物。","接受它。",
+    "拥抱变化。","敞开心扉。","你比你以为的更自由。",
+    "你比你以为的更完整。","你比你以为的更被爱。","你比你以为的更强大。",
+    "你比你以为的更值得。","你比你以为的更有才华。","你比你以为的更幸运。",
+    "你比你以为的更聪明。","你比你以为的更勇敢。","你比你以为的更美丽。",
+    "你比你以为的更平静。","你比你以为的更幸福。","你比你以为的更充满爱。",
+    "你比你以为的更充满希望。","你比你以为的更充满力量。","你比你以为的更充满智慧。",
+    "你比你以为的更充满创造力。","你比你以为的更充满热情。","你比你以为的更充满好奇。",
+    "你比你以为的更充满感恩。","你比你以为的更充满和平。","你比你以为的更充满喜悦。",
+    "相信自己的无限可能。"
+];
+
+// ===== 答案之书功能 =====
+function bookSpawnStars() {
+    const container = document.getElementById('bookModalStars');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < 14; i++) {
+        const star = document.createElement('div');
+        star.className = 'book-star';
+        star.style.left = 15 + Math.random() * 70 + '%';
+        star.style.top = 15 + Math.random() * 70 + '%';
+        star.style.animationDelay = Math.random() * 1 + 's';
+        container.appendChild(star);
+    }
+}
+
+function bookShowAnswer() {
+    const answer = BOOK_ANSWERS[Math.floor(Math.random() * BOOK_ANSWERS.length)];
+    const modal = document.getElementById('bookModal');
+    const answerEl = document.getElementById('bookModalAnswer');
+    if (!modal || !answerEl) return;
+    answerEl.textContent = '';
+    modal.classList.add('active');
+    bookSpawnStars();
+    answerEl.style.animation = 'none';
+    answerEl.offsetHeight;
+    answerEl.style.animation = '';
+    setTimeout(function() { answerEl.textContent = answer; }, 250);
+    playSfx && playSfx('complete');
+}
+
+function bookCloseModal() {
+    var modal = document.getElementById('bookModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function showBook() {
+    document.getElementById('homePage').classList.add('hidden');
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    var bp = document.getElementById('bookPage');
+    if (bp) { bp.classList.add('active'); bp.classList.add('page-enter'); }
+}
+
+function initBookModal() {
+    var modal = document.getElementById('bookModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) bookCloseModal();
+        });
+    }
+}
+
+// 初始化弹窗事件
+initBookModal();
 // ===== 预加载图片（分批，不抢带宽）=====
 function preloadBatch(start, end) {
     if (start >= end) return;
