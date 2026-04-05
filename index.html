@@ -720,30 +720,47 @@ function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.qu
     c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
     c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
 const IMG_SOURCES = [
-    'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@latest/',
-    'https://raw.gitmirror.com/shie91847-eng/tarot-cards/main/',
-    'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/'
+    'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/',
+    'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/',
+    'https://raw.gitmirror.com/shie91847-eng/tarot-cards/main/'
 ];
 let bestSource = IMG_SOURCES[0];
+let sourceScores = [0, 0, 0]; // 记录每个源的成功次数
 
 function getCardImageUrl(cardId) {
     return bestSource + cardId + '.png';
 }
 function getCardImageUrlFallback(cardId) {
-    return IMG_SOURCES[2] + cardId + '.png';
+    // 返回得分最高的非当前源
+    let fallbackIdx = IMG_SOURCES.indexOf(bestSource) === 0 ? 1 : 0;
+    return IMG_SOURCES[fallbackIdx] + cardId + '.png';
 }
 
-// 自动检测最快的图片源
+// 智能检测最快源（测试多张图，更准确）
 (function detectFastestSource() {
     let resolved = false;
-    IMG_SOURCES.forEach(src => {
-        const img = new Image();
-        const start = Date.now();
-        img.onload = () => {
-            if (!resolved) { resolved = true; bestSource = src; }
-        };
-        img.src = src + '0.png?' + Date.now();
+    const testCards = [0, 1, 10]; // 测试多张
+    IMG_SOURCES.forEach((src, srcIdx) => {
+        testCards.forEach(cardId => {
+            const img = new Image();
+            img.onload = () => {
+                sourceScores[srcIdx]++;
+                if (!resolved && sourceScores[srcIdx] >= 2) {
+                    resolved = true;
+                    bestSource = src;
+                }
+            };
+            img.src = src + cardId + '.png';
+        });
     });
+    // 5秒后根据得分选最优源
+    setTimeout(() => {
+        if (!resolved) {
+            let maxIdx = 0;
+            sourceScores.forEach((s, i) => { if (s > sourceScores[maxIdx]) maxIdx = i; });
+            if (sourceScores[maxIdx] > 0) bestSource = IMG_SOURCES[maxIdx];
+        }
+    }, 5000);
 })();
 // ============================================
 // TAROT DATA
@@ -999,17 +1016,43 @@ function loadCardImg(container, cardId) {
     container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
     container.onclick = null;
     let tryIdx = 0;
+    let timeoutId = null;
+
     function attempt() {
         if (tryIdx >= IMG_SOURCES.length) {
-            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;">点击重试</div>';
-            container.onclick = () => loadCardImg(container, cardId);
+            // 全部源都失败，显示重试按钮
+            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;text-align:center;padding:4px;">点击<br>重试</div>';
+            container.onclick = () => { tryIdx = 0; attempt(); };
             return;
         }
         const img = new Image();
-        img.src = IMG_SOURCES[tryIdx] + cardId + '.png?' + Date.now();
-        tryIdx++;
-        img.onload = () => { container.innerHTML = ''; container.onclick = null; container.appendChild(img); };
-        img.onerror = () => { attempt(); };
+        // 设置超时：5秒没加载完就换下一个源
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            img.onload = null;
+            img.onerror = null;
+            img.src = '';
+            tryIdx++;
+            attempt();
+        }, 5000);
+
+        img.onload = () => {
+            clearTimeout(timeoutId);
+            container.innerHTML = '';
+            container.onclick = null;
+            container.appendChild(img);
+            // 记录成功的源，动态调整最优源
+            sourceScores[tryIdx]++;
+            if (sourceScores[tryIdx] > sourceScores[IMG_SOURCES.indexOf(bestSource)] + 3) {
+                bestSource = IMG_SOURCES[tryIdx];
+            }
+        };
+        img.onerror = () => {
+            clearTimeout(timeoutId);
+            tryIdx++;
+            attempt();
+        };
+        img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
     }
     attempt();
 }
@@ -1058,7 +1101,7 @@ function showInterp(){
         const kw=card.isReversed?card.reversed:card.upright,desc=card.isReversed?card.reversedDesc:card.uprightDesc;
         const div=document.createElement('div');div.className='interp-card';div.style.animationDelay=`${idx*0.1}s`;
         const imgUrl = getCardImageUrl(card.id);
-        div.innerHTML=`<div class="interp-header"><div class="interp-thumb"><img src="${imgUrl}" alt="${card.name}" onerror="this.onerror=null;this.src=getCardImageUrlFallback(${card.id})"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
+        div.innerHTML=`<div class="interp-header"><div class="interp-thumb"><img src="${imgUrl}" alt="${card.name}" onerror="if(!this.dataset.try){this.dataset.try='1';this.src='${IMG_SOURCES[1]}${card.id}.png'}else if(this.dataset.try==='1'){this.dataset.try='2';this.src='${IMG_SOURCES[2]}${card.id}.png'}else{this.onerror=null;this.alt='图片加载失败'}"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
         area.appendChild(div);
     });
     area.scrollIntoView({behavior:'smooth',block:'start'});
