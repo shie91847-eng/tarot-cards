@@ -497,7 +497,8 @@
     backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s; overflow: hidden; text-align: center; padding-bottom: 8px; }
 .ency-card:hover { border-color: rgba(212,168,67,0.4); transform: translateY(-4px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 15px rgba(212,168,67,0.06); }
-.ency-card img { width: 100%; aspect-ratio: 5/8; object-fit: cover; display: block; border-bottom: 1px solid var(--glass-border); }
+.ency-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ency-card-img { width: 100%; aspect-ratio: 5/8; border-bottom: 1px solid var(--glass-border); overflow: hidden; background: #1a0a2e; }
 .ency-card .ency-card-name { font-size: 0.68rem; color: var(--text-primary); padding: 6px 4px 2px; font-weight: 600; }
 .ency-card .ency-card-en { font-size: 0.5rem; color: var(--text-secondary); opacity: 0.5; }
 .ency-detail-header { display: flex; gap: 16px; margin-bottom: 18px; }
@@ -921,30 +922,18 @@ function fillCardImg(container, cardId) {
     container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
     loadCachedImg(cardId, function(src) {
         if (src) {
-            container.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;display:block;object-fit:cover;">';
+            container.innerHTML = '';
+            var img = document.createElement('img');
+            img.src = src;
+            img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;';
+            container.appendChild(img);
         } else {
-            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;text-align:center;padding:4px;" onclick="fillCardImg(this.parentElement,' + cardId + ')">点击重试</div>';
+            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.6rem;cursor:pointer;text-align:center;padding:4px;line-height:1.6;">点击<br>重试</div>';
+            container.onclick = function() { container.onclick = null; fillCardImg(container, cardId); };
         }
     });
 }
 
-// 创建一个带缓存的img标签（用于图鉴等场景）
-function makeCachedImgTag(cardId, alt, extraStyle) {
-    var id = 'cimg_' + cardId + '_' + Math.random().toString(36).substr(2,5);
-    // 先返回占位，然后异步填充
-    setTimeout(function() {
-        var el = document.getElementById(id);
-        if (!el) return;
-        loadCachedImg(cardId, function(src) {
-            if (src && el) {
-                el.src = src;
-            }
-        });
-    }, 10);
-    var cached = imgCache[cardId];
-    var initSrc = cached || getCardImageUrl(cardId);
-    return '<img id="' + id + '" src="' + initSrc + '" alt="' + (alt||'') + '" style="' + (extraStyle||'') + '" loading="lazy" onerror="this.style.display=\'none\'">';
-}
 
 // 智能检测最快源（测试多张图，更准确）
 (function detectFastestSource() {
@@ -1188,10 +1177,14 @@ function filterEncy(type){
     var grid = document.getElementById('encyGrid');
 grid.innerHTML = cards.map(function(c){
     return '<div class="ency-card" onclick="showEncyDetail('+c.id+')">'+
-        makeCachedImgTag(c.id, c.name, 'width:100%;aspect-ratio:5/8;object-fit:cover;display:block;border-bottom:1px solid var(--glass-border);')+
+        '<div class="ency-card-img" data-cid="'+c.id+'"></div>'+
         '<div class="ency-card-name">'+c.name+'</div>'+
         '<div class="ency-card-en">'+c.en+'</div></div>';
 }).join('');
+var imgDivs = grid.querySelectorAll('.ency-card-img');
+for (var i = 0; i < imgDivs.length; i++) {
+    fillCardImg(imgDivs[i], parseInt(imgDivs[i].getAttribute('data-cid')));
+}
 }
 
 function getSuitName(id){
@@ -1217,7 +1210,7 @@ function showEncyDetail(id){
 
     // 头部：图片 + 基本信息
     html += '<div class="ency-detail-header">';
-    html += '<div class="ency-detail-img">'+makeCachedImgTag(card.id, card.name, 'width:100%;height:100%;object-fit:cover;')+'</div>';
+    html += '<div class="ency-detail-img" id="encyDetailImg"></div>';
     html += '<div class="ency-detail-info">';
     html += '<div class="ency-detail-name">'+card.name+'</div>';
     html += '<div class="ency-detail-en">'+card.en+'</div>';
@@ -1294,6 +1287,7 @@ if(spiritual){
     }
 
     document.getElementById('encyDetailContent').innerHTML = html;
+    fillCardImg(document.getElementById('encyDetailImg'), card.id);
     document.getElementById('encyDetailModal').classList.add('active');
 }
 
@@ -1651,7 +1645,8 @@ function showInterp(){
     drawn.forEach((card,idx)=>{
         const kw=card.isReversed?card.reversed:card.upright,desc=card.isReversed?card.reversedDesc:card.uprightDesc;
         const div=document.createElement('div');div.className='interp-card';div.style.animationDelay=`${idx*0.1}s`;
-        div.innerHTML=`<div class="interp-header"><div class="interp-thumb">${makeCachedImgTag(card.id, card.name, 'width:100%;height:100%;display:block;object-fit:cover;')}</div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
+        div.innerHTML=`<div class="interp-header"><div class="interp-thumb" id="itp_${idx}"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
+        fillCardImg(div.querySelector('.interp-thumb'), card.id);
         area.appendChild(div);
     });
     area.scrollIntoView({behavior:'smooth',block:'start'});
