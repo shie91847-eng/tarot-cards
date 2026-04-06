@@ -845,10 +845,105 @@ let sourceScores = [0, 0, 0]; // 记录每个源的成功次数
 function getCardImageUrl(cardId) {
     return bestSource + cardId + '.png';
 }
-function getCardImageUrlFallback(cardId) {
-    // 返回得分最高的非当前源
-    let fallbackIdx = IMG_SOURCES.indexOf(bestSource) === 0 ? 1 : 0;
-    return IMG_SOURCES[fallbackIdx] + cardId + '.png';
+
+// ===== 全局图片缓存系统 =====
+var imgCache = {};
+var imgLoading = {};
+
+function loadCachedImg(cardId, callback) {
+    // 如果已经缓存了，直接返回
+    if (imgCache[cardId]) {
+        callback(imgCache[cardId]);
+        return;
+    }
+    // 如果正在加载，排队等
+    if (imgLoading[cardId]) {
+        imgLoading[cardId].push(callback);
+        return;
+    }
+    // 开始加载，建立等待队列
+    imgLoading[cardId] = [callback];
+    var tryIdx = 0;
+    var timeoutId = null;
+
+    function onSuccess(src) {
+        imgCache[cardId] = src;
+        var queue = imgLoading[cardId] || [];
+        delete imgLoading[cardId];
+        queue.forEach(function(cb) { cb(src); });
+        // 记录成功的源
+        var sIdx = -1;
+        for (var i = 0; i < IMG_SOURCES.length; i++) {
+            if (src.indexOf(IMG_SOURCES[i]) === 0) { sIdx = i; break; }
+        }
+        if (sIdx >= 0) {
+            sourceScores[sIdx]++;
+            if (sourceScores[sIdx] > sourceScores[IMG_SOURCES.indexOf(bestSource)] + 2) {
+                bestSource = IMG_SOURCES[sIdx];
+            }
+        }
+    }
+
+    function tryNext() {
+        if (tryIdx >= IMG_SOURCES.length) {
+            // 全部失败
+            var queue = imgLoading[cardId] || [];
+            delete imgLoading[cardId];
+            queue.forEach(function(cb) { cb(''); });
+            return;
+        }
+        var src = IMG_SOURCES[tryIdx] + cardId + '.png';
+        var img = new Image();
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(function() {
+            img.onload = null;
+            img.onerror = null;
+            img.src = '';
+            tryIdx++;
+            tryNext();
+        }, 3000);
+        img.onload = function() {
+            clearTimeout(timeoutId);
+            onSuccess(src);
+        };
+        img.onerror = function() {
+            clearTimeout(timeoutId);
+            tryIdx++;
+            tryNext();
+        };
+        img.src = src;
+    }
+    tryNext();
+}
+
+// 把缓存的图片填入容器
+function fillCardImg(container, cardId) {
+    container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
+    loadCachedImg(cardId, function(src) {
+        if (src) {
+            container.innerHTML = '<img src="' + src + '" style="width:100%;height:100%;display:block;object-fit:cover;">';
+        } else {
+            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;text-align:center;padding:4px;" onclick="fillCardImg(this.parentElement,' + cardId + ')">点击重试</div>';
+        }
+    });
+}
+
+// 创建一个带缓存的img标签（用于图鉴等场景）
+function makeCachedImgTag(cardId, alt, extraStyle) {
+    var id = 'cimg_' + cardId + '_' + Math.random().toString(36).substr(2,5);
+    // 先返回占位，然后异步填充
+    setTimeout(function() {
+        var el = document.getElementById(id);
+        if (!el) return;
+        loadCachedImg(cardId, function(src) {
+            if (src && el) {
+                el.src = src;
+            }
+        });
+    }, 10);
+    var cached = imgCache[cardId];
+    var initSrc = cached || getCardImageUrl(cardId);
+    return '<img id="' + id + '" src="' + initSrc + '" alt="' + (alt||'') + '" style="' + (extraStyle||'') + '" loading="lazy" onerror="this.style.display=\'none\'">';
 }
 
 // 智能检测最快源（测试多张图，更准确）
@@ -1091,13 +1186,12 @@ function filterEncy(type){
     else if(type==='pentacles') cards = pentacles;
 
     var grid = document.getElementById('encyGrid');
-    grid.innerHTML = cards.map(function(c){
-        var imgUrl = getCardImageUrl(c.id);
-        return '<div class="ency-card" onclick="showEncyDetail('+c.id+')">'+
-            '<img src="'+imgUrl+'" alt="'+c.name+'" loading="lazy" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=\''+IMG_SOURCES[1]+c.id+'.png\'}">'+
-            '<div class="ency-card-name">'+c.name+'</div>'+
-            '<div class="ency-card-en">'+c.en+'</div></div>';
-    }).join('');
+grid.innerHTML = cards.map(function(c){
+    return '<div class="ency-card" onclick="showEncyDetail('+c.id+')">'+
+        makeCachedImgTag(c.id, c.name, 'width:100%;aspect-ratio:5/8;object-fit:cover;display:block;border-bottom:1px solid var(--glass-border);')+
+        '<div class="ency-card-name">'+c.name+'</div>'+
+        '<div class="ency-card-en">'+c.en+'</div></div>';
+}).join('');
 }
 
 function getSuitName(id){
@@ -1123,7 +1217,7 @@ function showEncyDetail(id){
 
     // 头部：图片 + 基本信息
     html += '<div class="ency-detail-header">';
-    html += '<div class="ency-detail-img"><img src="'+imgUrl+'" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=\''+IMG_SOURCES[1]+card.id+'.png\'}"></div>';
+    html += '<div class="ency-detail-img">'+makeCachedImgTag(card.id, card.name, 'width:100%;height:100%;object-fit:cover;')+'</div>';
     html += '<div class="ency-detail-info">';
     html += '<div class="ency-detail-name">'+card.name+'</div>';
     html += '<div class="ency-detail-en">'+card.en+'</div>';
@@ -1228,10 +1322,67 @@ function getDeepSymbolism(id){
         18:"月亮照耀着一条从水中蜿蜒到远方山脉的道路——这是潜意识到意识的旅程。龙虾从水中爬出象征最深层恐惧的浮现。狗和狼分别代表驯化的本能和野性的本能，两者在月光下同时嚎叫。双塔标记着已知与未知的边界。水面的波动暗示情绪的不稳定。月亮只反射太阳的光——提醒我们眼前所见可能只是幻象而非真相。",
         19:"太阳牌中赤裸的孩子骑在白马上，代表纯真、自由和与生俱来的喜悦。向日葵面朝观者而非太阳——暗示你自己就是光源。红色旗帜象征行动力和生命力的全面复苏。石墙代表已经克服的障碍(塔牌的废墟被重建)。太阳放射的直线和曲线代表理性之光和感性温暖的完美融合。这是整副牌中最积极的能量。",
         20:"审判中天使吹响号角——这是灵魂的觉醒之号。从棺材中站起来的人们代表从旧生活中重生，赤裸意味着放下了一切伪装。十字旗帜代表四大元素的整合与平衡。蓝灰色的山脉代表已经翻越的精神考验。男人、女人、孩子代表意识、潜意识和更新的自我。这不是终末审判，而是灵魂对自己一生旅程的清醒回顾和整合。",
-        21:"世界牌中央的舞者被月桂花环围绕——胜利与完成的象征。她手持两根权杖代表平衡了给予和接受、上升和下降的力量。四角的生物与命运之轮相同，但这一次它们不再转动——稳定的觉知已经达成。花环形成的椭圆形是宇宙之蛋，象征无限的可能。紫色丝带绑成无限符号，回应了魔术师的无限——旅程的终点也是新的起点。"
+        21:"世界牌中央的舞者被月桂花环围绕——胜利与完成的象征。她手持两根权杖代表平衡了给予和接受、上升和下降的力量。四角的生物与命运之轮相同，但这一次它们不再转动——稳定的觉知已经达成。花环形成的椭圆形是宇宙之蛋，象征无限的可能。紫色丝带绑成无限符号，回应了魔术师的无限——旅程的终点也是新的起点。",
+        22:"权杖王牌中，一只从云中伸出的手紧握着生机勃勃的木杖——这不是雕琢过的权杖，而是一根活着的、正在发芽的树枝。叶子从木杖上向四面八方生长，象征着创造力的蓬勃爆发。云代表精神世界，手从云中伸出意味着这份灵感是来自更高维度的礼物。远方的城堡象征着这个创意种子最终可以建造的宏伟成就。飘落的叶子既是祝福，也在暗示——灵感虽丰沛，但需要落地才能生根。",
+        23:"权杖二中，一个穿着华服的人站在城堡的露台上，右手握着一根权杖，左手托着一个小地球。他凝望着远方广阔的海洋和山脉。固定在墙上的另一根权杖代表已经拥有的成就和安全感，而手中的地球象征着尚未征服的广阔世界。他站在中间——既不在室内的安全中，也没有踏上旅途。这是决策前最安静的时刻。红色的玫瑰和白色的百合分别代表激情和纯洁，暗示这个选择需要两者的平衡。",
+        24:"权杖三中，一个人背对着我们站在悬崖边，眺望着远方金色的海洋，三艘商船正在航行。他手握的权杖已经稳稳地插在地上，代表基础已经建立。三根权杖形成稳固的三角结构，象征着事业初步成型的稳定。金色的天空暗示丰收的前景。他的红色斗篷象征行动的勇气，而从背后看不到他的表情——因为真正的远见者不需要回头寻求认可，他只需注视前方。",
+        25:"权杖四中，四根权杖上系满了花环和缎带，构建出一个喜庆的门廊。远处是城市的轮廓，前景中人们举手欢庆。花环是胜利和丰收的古老象征。四根权杖形成的方形门框代表稳定和保护——你创造了一个安全的空间。城市代表社会的认可。人们手中高举的花束象征着集体的祝福。这是一个暂停键——在旅途中的驿站，庆祝已经走过的路，为接下来的行程蓄力。",
+        26:"权杖五中，五个人各自挥舞着权杖在混战——但仔细看，他们的姿态更像是在比试而非真正的战斗。没有人受伤，没有流血。这场冲突的本质是建设性的——不同观点的碰撞产生新的火花。五根权杖交叉形成的图案像是一颗星星——暗示混乱中隐藏着秩序。背景的天空是清朗的，说明这场风暴只在表面，不会动摇根基。混乱是创造的前奏。",
+        27:"权杖六中，一个骑者头戴月桂冠，骑在白马上凯旋。他手持被绿色花环装饰的权杖，身后跟随着欢呼的人群。白马代表纯洁的力量和精神上的胜利。月桂冠自古希腊以来就是荣耀的象征。他的姿态不是傲慢的——身体略微前倾，表示谦逊。人群中也有人举着权杖，暗示这份荣耀不只属于一个人，而是集体努力的成果。胜利是甜美的，但真正的王者懂得分享。",
+        28:"权杖七中，一个人站在高处，独自面对着从下方攻来的六根权杖。他的姿态是防御性的但充满力量——双脚稳稳地站在山丘上，利用地形的优势。高处的位置象征道德制高点或坚定的信念。他穿着绿色的衣服，代表成长和生命力。六根进攻的权杖虽然数量更多，但它们是从下方攻来——暗示这些挑战虽然多，但不如他的立场稳固。坚守高地，考验的是耐力而非蛮力。",
+        29:"权杖八中，八根权杖在空中平行飞行，划过清澈的蓝天，朝着远方的山丘和河流急速前进。它们没有被任何人握着——这是纯粹的能量在自由流动。八这个数字在很多传统中代表无限(将8横放就是∞)。权杖上的嫩叶在风中颤动，说明它们是活的、有生命力的。地面上的河流象征情感的流动。一切都在运动中——没有障碍，没有犹豫。这是宇宙说'放手让它飞'的时刻。",
+        30:"权杖九中，一个受伤的战士靠着一根权杖站立，身后是其余八根权杖组成的防御墙。他头上绑着绷带，表情疲惫但坚毅——他经历了战斗，受了伤，但没有倒下。绷带是白色的，象征着精神的纯洁在考验中依然完整。八根权杖整齐排列在他身后，说明他之前的八场战斗都赢了。这是最后一关。他的眼神向前注视——不是在回顾伤痛，而是在准备迎接下一步。",
+        31:"权杖十中，一个人弯着腰，艰难地扛着十根权杖向前走。他的身体几乎被权杖压得看不见——只能看到他紧握的双手和沉重的脚步。远方有一座城镇，代表他的目标。十根权杖本身代表已经完成的十个阶段的努力——它们不是无用的负担，而是成就的重量。问题不是这些成就，而是他试图同时搬运所有的东西。大地的颜色是肥沃的棕色，暗示只要放下一些，就能在这片土地上种出更多。",
+        32:"权杖侍从是一个年轻人，双手捧着一根权杖，好奇地端详着上面冒出的嫩芽。他的穿着是明亮的黄色和橙色——火元素的颜色。他站在干燥的大地上，但权杖上的绿叶证明生命可以在任何环境中萌发。他的帽子上有一根红色羽毛，象征着对冒险的渴望。他的表情是惊奇和兴奋的——像是第一次发现火的孩子。沙漠般的背景暗示他还没有太多经验，但这正是起点的样子。",
+        33:"权杖骑士骑在一匹奔腾的红马上，手持权杖向前冲锋。红马象征激情和行动力的爆发。马的前蹄腾空，暗示他已经离开了安全的地面。骑士的盔甲上装饰着火蜥蜴——传说中能在火中生存的生物，象征对激情的掌控。他的黄色披风在风中飘扬，代表光明和乐观。背景中有三座金字塔——远大的目标。但注意，马的方向略显混乱——热情需要缰绳，否则就变成了横冲直撞。",
+        34:"权杖王后端坐在王座上，一手持向日葵，一手持权杖。她的王座扶手上雕刻着狮子——火元素的守护兽。一只黑猫蹲坐在她脚边，象征着对神秘和直觉的连接。向日葵代表生命力、忠诚和对光明的追求。她的黄色长裙代表智慧和温暖。背景是沙漠中的绿洲——她有能力在最荒芜的环境中创造繁荣。她的表情是温暖而自信的——不需要证明什么，她的存在本身就是光。",
+        35:"权杖国王坐在王座上，手持一根发芽的权杖。他的王座上也刻着火蜥蜴，但与骑士不同，国王的火蜥蜴是咬着自己尾巴的——象征着完成的循环和对火元素的完全掌握。他的斗篷是红色的(行动)，内衬是绿色的(成长)。脚边有一只小蜥蜴——暗示他能在最微小的事物中看到潜力。他的目光不是看着远方，而是看着正前方——一个真正的领导者关注的是当下需要做什么。",
+        36:"圣杯王牌中，一只从云中伸出的手托举着一个金色的圣杯。杯中流出五道水流，落入下方布满莲花的湖面。五道水流代表五种感官——暗示这份情感不是抽象的，而是通过身体真切感受到的。圣杯上的W形代表水元素。从杯中飞出一只白鸽，口衔圣饼——这是圣灵降临的象征，意味着这份爱有着神圣的源头。莲花从泥水中绽放——最纯粹的爱往往在最不完美的环境中诞生。",
+        37:"圣杯二中，一男一女面对面站立，各自举着一个杯子互相敬酒。在他们上方，两条蛇缠绕在一根带翼的权杖上——这是赫尔墨斯之杖（商神杖），代表沟通、治愈和两个对立面的和谐统一。狮子头象征着激情和欲望。两人之间的距离不远不近——亲密但不失独立。他们的衣服颜色不同，代表他们是不同的个体。真正的伙伴关系不是成为同一个人，而是两个不同的人选择走在一起。",
+        38:"圣杯三中，三个女子举杯庆祝，头上戴着花环，脚下是丰收的果实和南瓜。三个女子可以代表命运三女神、三相女神或者简单的友谊纽带。花环象征荣耀和庆典。丰收的果实代表共同努力的成果。她们围成一个圈——圆形是完整和无限的象征。每个人的杯子都举得一样高——这是平等的欢庆，没有谁比谁更重要。集体的喜悦比个人的成就更加甜蜜。",
+        39:"圣杯四中，一个人坐在树下，双臂交叉，面前有三个杯子，但他的眼睛只盯着它们不看。云中伸出一只手递给他第四个杯子——但他没有注意到。这是整张牌最关键的象征：新的机遇正在被递到面前，但因为沉浸在对现有事物的不满中而完全忽视了。树提供了荫凉（舒适区），他的坐姿很封闭。三个杯子没有被打翻——他拥有的并没有失去，只是他对它们失去了兴趣。",
+        40:"圣杯五中，一个黑色斗篷的人低头注视着三个被打翻的杯子，里面的水正在流出。但在他身后，两个杯子依然完好地立着——他没有看到它们。远处有一座桥通往一座城堡——代表回家的路。河水在桥下流过——情绪像水一样需要流动。黑色斗篷象征悲伤的沉重感，但它是可以脱下的。整张牌的教导就在那两个被忽视的杯子里：你以为你失去了一切，但转身就会发现并非如此。",
+        41:"圣杯六中，一个较大的孩子把装满白色花朵的杯子递给一个较小的孩子。六个杯子里都盛满了花。一座古老的房子在背景中，一个成年人在远处走开。花朵代表纯真的快乐和美好的回忆。孩子之间的给予是无条件的——没有交易，没有期望，只有单纯的分享。成年人走开可能代表当下的'你'，暂时回到了童年的回忆中寻找慰藉。六角星形的花朵排列暗示和谐与平衡。怀旧不是逃避，而是找回失落的纯真。",
+        42:"圣杯七中，一个黑色剪影面对着七个杯子，每个杯子里浮现出不同的幻象——城堡、珠宝、花环、龙、蛇、光辉的人影和一张被布覆盖的神秘面孔。这些幻象代表人心中的各种欲望和幻想。它们漂浮在云中——美丽但不真实。杯子的排列形成了一个弧形，像一面镜子映照着观者的内心。黑色的剪影说明观者被幻象的光芒遮蔽了自己的形象。选择的关键不是哪个最闪亮，而是哪个是真实的。",
+        43:"圣杯八中，一个穿红衣的人在月光下转身离开八个整齐叠放的杯子，朝着山脉走去。红色代表勇气——离开需要行动的决心。八个杯子排列得很整齐，中间还缺了一个——象征着看似完美的生活中有一个空洞。月亮代表直觉和潜意识——他是在夜晚出发的，暗示这个决定来自内心而非理性。水和山代表情感和障碍。他的背影孤独但坚定——有些旅程注定要一个人走。",
+        44:"圣杯九中，一个满足的商人坐在木凳上，双臂交叉，微笑着。他身后是一面弧形的架子，上面整齐排列着九个金色的杯子。他的衣服是白色的(纯洁)，帽子是红色的(满足的热情)。他的坐姿很放松但不懒散——这是一个对自己的成就感到安心的人。九个杯子排列的弧形像是一道彩虹——愿望成真的象征。整张牌散发着温暖的金色光芒。注意他是独自一人——真正的满足不需要他人的验证。",
+        45:"圣杯十中，一对夫妇站在彩虹下，伸开双臂拥抱，两个孩子在旁边跳舞。十个杯子排列在彩虹中。远处是一栋温馨的房屋和一条蜿蜒的小河。彩虹是暴风雨后的承诺——最深的幸福往往在最深的困难之后。十个杯子排成完美的弧形——情感的完整循环。孩子们的舞蹈代表纯真的喜悦。河水静静流淌——情感不再波涛汹涌，而是平静而深沉。房屋代表心灵的归宿。这是塔罗中最温暖的画面之一。",
+        46:"圣杯侍从是一个年轻人，站在海边，温柔地注视着杯中游动的一条小鱼。他穿着蓝色的衣服上绣满了花朵，代表情感的丰富和对美的敏感。鱼是潜意识的象征——从水(情感)的深处浮上来的讯息。他的表情是好奇和温柔的——他不是在分析这条鱼，而是在感受它。海浪在他身后轻轻拍打——情绪的海洋并不可怕。他的姿态稳定，双脚踏在坚实的地面上——感性但不失根基。",
+        47:"圣杯骑士骑在一匹白马上，手持圣杯，缓缓向前行进。与权杖骑士的奔腾不同，他的马步伐优雅而从容。他穿着带有鱼鳞图案的盔甲，与水元素深度连接。头盔上有翅膀，象征着灵感和想象力的飞翔。白马代表精神的纯洁。他面前有一条河——情感的象征。杯中没有水溢出——即使在行动中也保持着情感的稳定。河对岸有一片风景——理想的目标。他不急不躁，因为他知道真正重要的事情不能被催促。",
+        48:"圣杯王后坐在水边华丽的王座上，手持一个精致的封闭式圣杯——她是唯一一个杯子有盖的宫廷牌成员。这象征着她能保守秘密，也代表情感的深不可测。王座上刻满了海精灵和贝壳。她的脚浸在水中(与情感世界直接接触)，但坐在坚实的石头上(保持稳定)。岸边有彩色的鹅卵石——经过水的冲刷变得圆润，就像经历过的情感让灵魂变得柔软。她的凝视温柔但有深度——一个能看穿你灵魂的人。",
+        49:"圣杯国王坐在浮在水面上的石头王座中——看似矛盾但完美平衡。他一手持杯，一手持权杖——情感与行动的统一。他的长袍是蓝色的(水)但里面是红色的(火)——感性的外表下有行动的热情。背景一边是平静的水面，另一边是跳跃的海豚和航行的船——他能同时驾驭内心的平静和外在的波澜。脖子上的鱼形吊坠连接着他与深层潜意识。他不回避任何情绪，但也不被任何情绪控制。",
+        50:"宝剑王牌中，一只从云中伸出的手紧握着一把向上直指的双刃剑。剑尖上戴着一顶金色的王冠，两侧垂下月桂枝(胜利)和棕榈枝(和平)。双刃象征真相的两面性——它既能解放你，也能伤害你。云代表精神世界，剑穿透云层意味着思维突破了迷雾。王冠代表思维的最高成就。背景中有山脉和悬崖——真相往往出现在高处，获取它需要攀登。六颗小光球是种子——一次清晰的顿悟可以播下多个新开始。",
+        51:"宝剑二中，一个蒙着眼睛的女子坐在海边，双手交叉各持一把剑，保持着精确的平衡。蒙眼布不是被迫的，而是她自己选择的——暂时屏蔽外部信息，转向内在的感知。两把剑交叉形成了一个X——代表选择的十字路口。身后的海面上有起伏的波浪和一弯新月——情绪在暗流涌动，但她选择了保持静止。她坐在石头上——即使在情绪的海洋旁，理性依然有坚实的基础。平衡不是永恒的状态，而是每一刻的选择。",
+        52:"宝剑三中，三把剑直直地刺穿一颗红色的心脏。背景是灰暗的雨云和倾盆大雨。心脏是鲜红的——痛苦是真实的、鲜活的、无法回避的。三把剑代表头脑、情感和灵性三个层面的创伤。雨水既是悲伤的象征，也是净化的力量——每一滴眼泪都在冲洗伤口。没有人物出现在画面中——在这种程度的痛苦面前，身份和角色都消失了，只剩下纯粹的感受。但心脏虽被穿刺，并没有碎裂——它能承受的比你想象的更多。",
+        53:"宝剑四中，一个骑士的石像躺在教堂的石棺上。他的双手合十在胸前，一把剑平放在身侧，三把剑挂在上方的墙上。这不是死亡，而是神圣的休息——中世纪骑士的'守夜礼'。彩色玻璃窗透进柔和的光线，暗示即使在最深的静止中，精神之光也在渗入。石棺上的雕刻展示了祈祷的姿态——休息本身就是一种祈祷。三把剑高悬但不会落下——你的忧虑还在，但在这个安全的空间里它们无法触及你。",
+        54:"宝剑五中，一个胜利者拾起了战场上遗落的剑，脸上带着得意的笑容。两个失败者在远处沮丧地离去。天空布满了乌云，水面波涛汹涌。但仔细看——胜利者手中的剑是别人的，他赢得的是别人的损失。乌云暗示这种胜利不会带来晴天。两个离去的人虽然失败，但他们还在一起——而胜利者是孤独的。水面的波涛代表这场冲突搅乱了所有人的情绪。有些胜利的代价是孤独。",
+        55:"宝剑六中，一个撑船的人载着一个女人和一个孩子渡过平静的水面。船上插着六把剑。远处的水面从波涛变为平静。女人的头低垂着——她还沉浸在刚刚离开的痛苦中。孩子紧靠着她——脆弱的部分需要保护。撑船的人代表引导者或更高的自我。六把剑代表过去的思维模式——它们还在船上，但不再被握在手中了。这不是逃跑，而是有意识地从一个阶段过渡到下一个。",
+        56:"宝剑七中，一个人鬼鬼祟祟地抱着五把剑离开营地，身后还留着两把。他的姿态是弯腰的、偷偷摸摸的——暗示他的方法不够光明正大。但也可以从另一个角度理解：他在智取而非力战。五把剑太多了——一个人抱不稳这么多，暗示贪心可能导致失败。帐篷代表别人的领地。远处有群山——暗示还有更远的路要走。这张牌的关键不在于道德判断，而在于问：你的手段配得上你的目的吗？",
+        57:"宝剑八中，一个女人被绑住双手，蒙着眼睛，周围插着八把剑形成了一个笼子。她站在泥泞的水中，背后是荒芜的城堡。但最关键的细节是：绳索绑得很松，她随时可以挣脱。蒙眼布也没有系紧。八把剑虽然围绕着她，但剑尖朝上而非指向她——它们不是攻击，而是她自己建造的思维围墙。泥泞的水代表混乱的情绪。这张牌的核心信息：你的牢笼是自建的，钥匙一直在你手里。",
+        58:"宝剑九中，一个人坐在床上，双手捂住脸。九把剑横挂在他身后黑暗的墙壁上。这是凌晨三点的场景——万物沉睡时恐惧最为猖獗。床上的被子上绣着黄道十二宫和玫瑰——暗示即使在最黑暗的时刻，宇宙的秩序和美依然存在。九把剑是他的忧虑和噩梦——但它们挂在墙上，而不是刺在他身上。窗外是完全的黑暗——他无法看到天很快就要亮了。恐惧在黑暗中被放大了一百倍。",
+        59:"宝剑十中，一个人面朝下倒在地上，十把剑刺在他的背上。红色的天空和黑色的云层构成了最阴暗的背景。但远方的地平线上有一道金色的光——黎明即将到来。平静的水面在远处闪着微光——情感的海洋不会永远波涛汹涌。十把剑代表思维模式的终极崩溃——所有旧的想法和信念都已经被击穿了。这看起来是终结，但那道金色的光线说明：这也是重生的第一缕曙光。结束即开始。",
+        60:"宝剑侍从是一个年轻人站在多风的山丘上，双手高举一把剑，像是在检验它的重量和平衡。他的身体向后倾斜，头发和衣服在风中飞扬——风（空气元素）的力量正在考验他。远处有起伏的云层和飞鸟。他的表情专注而认真——对他来说，这把剑还是新的，每一次挥动都是学习。地面崎岖不平——知识的道路不是平坦的。但他站在高处——好奇心已经把他带到了比大多数人更高的地方。",
+        61:"宝剑骑士骑在一匹疾驰的白马上，手持长剑向前冲锋。白马的四蹄离地——完全不接触大地，象征着纯粹的思维可能脱离现实。风中的云层和弯曲的树木说明他正在制造风暴。他的盔甲上装饰着蝴蝶和飞鸟——思想的轻盈和自由。但马的速度太快了——地面上的花朵被踩碎了，暗示速度可能带来无意识的伤害。剑指向前方——目标明确，但路上的一切都被忽略了。快不等于好。",
+        62:"宝剑王后坐在石头王座上，右手高举宝剑直指天空，左手微微伸出似乎在邀请什么。她的王座矗立在高处，周围是风和云。她的表情冷静但不冰冷——这是经历过暴风雨之后的平静。王座上雕刻着蝴蝶（蜕变）和天使（精神指引）。她穿着蓝色斗篷——智慧和真相的颜色。头上的王冠由蝴蝶装饰——她的权威来自于个人的蜕变经历。远处有一只鸟孤独地飞翔——独立的思想者往往是孤独的，但也是自由的。",
+        63:"宝剑国王端坐在高高的王座上，一手持剑，一手放在膝上。他的王座上刻着新月和蝴蝶。背景中的天空既有乌云也有蓝天——他能同时看到光明和黑暗。两棵树在远处——一棵茂盛一棵枯萎，代表他对生死、成败的平等注视。紫色的长袍代表智慧和灵性。他的剑略微倾斜而非垂直——代表实用主义的灵活而非教条的僵硬。他的目光穿透画面看着观者——仿佛在说：让我看看你隐藏了什么。",
+        64:"星币王牌中，一只从云中伸出的手托着一枚巨大的金币。金币上刻着五芒星——代表五大元素（地、水、火、风、灵）在物质世界的统一。手掌下方是一座繁花盛开的花园，有拱形的绿篱和盛放的百合。花园通向远方的山脉——物质的丰盛可以延伸到很远。云层代表这份丰盛来自精神世界的赐予。百合象征纯洁——暗示真正的丰盛需要纯净的意图。这不只是一枚金币，而是一颗等待播种的种子。",
+        65:"星币二中，一个年轻人头戴高帽，手中托着两枚金币，在它们之间舞动，形成了无限符号(∞)的轨迹。背景中有波涛起伏的海面和两艘船。他的表情轻松愉快——平衡对他来说像游戏一样。无限符号代表能量的永恒循环。高帽象征着乐观和幽默感。海浪代表生活的起伏——但他站在岸上，没有被卷入。两艘船代表两个同时进行的项目或方向。真正的平衡不是静止，而是优雅地在变化中保持节奏。",
+        66:"星币三中，一个石匠站在修道院的石拱门前工作。他手持工具正在雕刻石柱上的花纹。两个身着长袍的人——一个僧侣和一个贵族——正在审视设计图。三枚星币被嵌入石拱中，形成了一个三角形。修道院象征着神圣的空间。三个人代表构想者、资助者和执行者——每一个伟大的作品都需要这三方合作。石头上的花纹既复杂又精美——只有耐心和技艺的结合才能创造出持久的美。",
+        67:"星币四中，一个人紧紧抱着一枚金币，踩在两枚金币上，头顶还顶着一枚。他在一座城市的边缘，背景中有华丽的建筑。他的表情紧张而戒备——害怕失去他所拥有的一切。他的姿态是封闭的——保护性的，但也是孤立的。城市在他身后——他选择远离人群来保护自己的财富。但注意他的姿势是不可持续的——你不能永远这样站着。踩在金币上意味着他把财富当作地基，而不是让它流动。安全感变成了牢笼。",
+        68:"星币五中，两个穿着破旧的人在风雪中蹒跚前行。他们经过一座教堂的彩色玻璃窗——窗内透着温暖的光。窗上刻着五枚星币组成的五芒星。其中一个人赤脚，另一个缠着绷带——物质和身体的双重困苦。但教堂的门就在旁边——帮助近在咫尺。五芒星是保护和庇佑的符号。暴风雪象征着外在环境的严酷。他们是否选择走进教堂，取决于他们是否愿意放下骄傲接受帮助。困境往往不是因为缺乏资源，而是因为看不到它。",
+        69:"星币六中，一个穿着华丽的商人手持天平，将金币分给两个跪着的乞丐。六枚星币平均分布。商人的衣着是紫色的——代表灵性的慷慨，而不仅仅是物质的施舍。天平代表公平——每个人得到他们需要的份额。乞丐的姿态是接受性的但有尊严的——接受帮助不等于丧失尊严。背景中有一座城市——这发生在社区之中。六这个数字代表和谐——给予和接受的完美循环。每一次慷慨的给予都是在播种未来的丰收。",
+        70:"星币七中，一个农夫靠在锄头上，凝视着灌木丛上挂满的七枚金色果实（星币）。他的表情带着满足但也有一丝忧虑——收获看起来不错，但是否已经足够？他的工作服沾满了泥土——代表真实的辛勤付出。灌木丛健康而茂盛——他的耕耘方法是正确的。远处的山脉和金色的天空暗示着更大的丰收还在未来。停下来评估是明智的——但不要在评估中耗费太多时间而错过最佳收割期。信任你已经播下的种子。",
+        71:"星币八中，一个年轻的工匠坐在工作台前，专注地雕刻着星币。他面前已经完成了六枚精美的星币，整齐地挂在展示架上，手中正在雕刻第七枚，旁边还有一枚等待加工。他穿着工匠的围裙，工具整齐地排列在身边。小镇在远处的背景中——世界在外面运转，但他选择了专注于手中的作品。每一枚完成的星币都比前一枚更精美——这是可见的进步。八这个数字代表技艺通过重复达到的完美。没有捷径，只有不断练习。",
+        72:"星币九中，一位衣着华贵的女子独自站在葡萄园中。九枚星币排列在她周围的灌木丛上，像是她花园中自然生长的果实。一只猎鹰停在她戴着手套的手上——猎鹰象征着精准的眼光和独立的精神。她的表情是满足而优雅的——这不是暴发户的炫耀，而是长期积累的从容。葡萄园代表多年的耐心培育。蜗牛在她脚边——缓慢但确定的进步。她不需要任何人来验证她的成功——她的花园本身就是证明。",
+        73:"星币十中，一位老人坐在家庭的拱门下。拱门上的十枚星币排列成生命之树的图案。他的家人——孩子、孙辈、甚至宠物——围绕在他身边。两只白狗象征忠诚和守护。城堡和庄园在背景中——代表多代人建立的家业。老人的长袍上绣满了葡萄藤——丰收和传承的象征。生命之树的排列暗示这份财富不仅是物质的，更是精神的传承。每一代人都在树上加上自己的枝叶。最深的富足是知道你的爱会继续活在后来的人心中。",
+        74:"星币侍从是一个年轻人站在花草繁茂的田野中，双手小心翼翼地托举着一枚星币，像是在研究它。他穿着绿色和棕色的衣服——大地的颜色。脚下的土地肥沃——他站在一个充满潜力的环境中。远处有一片新开垦的耕地——他的旅程才刚刚开始。他抬头望向星币的姿态像是在对它许愿——梦想和现实的第一次接触。头上的红色帽子代表行动的意愿。一切伟大的成就都始于这样一个时刻——手握一粒种子，心怀一片森林。",
+        75:"星币骑士骑在一匹沉稳的黑马上，手持一枚星币。与其他骑士的动态姿势不同，这匹马几乎是静止的——四蹄稳稳地踏在地面上。骑士的盔甲上装饰着橡树叶和橡子——象征缓慢但坚实的成长。背景是一片广阔而平坦的耕地——没有戏剧性的山峰或海洋，只有朴实的大地。他的目光专注地看着手中的星币——他不急于到达任何地方。在一个追求速度的世界里，他的慢是一种力量。真正持久的东西都是慢慢建造的。",
+        76:"星币王后坐在花园中的石头王座上，膝上放着一枚大大的星币。她周围是繁花似锦的花园——玫瑰、百合、各种果树。一只兔子在她脚边——代表丰饶和繁殖。王座上雕刻着水果和天使——物质的丰盛与精神的祝福合一。她的表情宁静而满足——不是因为她拥有很多，而是因为她与自己拥有的一切深度连接。她看着星币的眼神温柔——像看着自己的孩子。这座花园不是一夜之间建成的，它是年复一年的爱与耐心的结晶。",
+        77:"星币国王坐在被葡萄藤装饰的沉重王座上。他穿着绣满葡萄和金币图案的长袍。一只牛头刻在王座上——金牛座的象征，代表稳定、耐心和物质的掌控力。他一手持权杖（世俗权力），一手轻放在膝上的星币（财富）。他的城堡在远处——他建造了一个帝国。他的表情是满足但也有一丝疲惫——维持一个帝国比建造它更需要智慧。脚下的花园精心打理——他不仅创造财富，也享受财富。最终极的奢侈不是拥有什么，而是有时间去欣赏你所拥有的。"
     };
     return data[id] || '';
 }
+   
 
 // 大阿卡纳灵性启示
 function getSpiritualMeaning(id){
@@ -1456,50 +1607,7 @@ function onFanCardClick(fi){
         const title=front.querySelector('.card-title');
         const orient=front.querySelector('.card-orient');
 
-        // ★ 使用真实图片替代 canvas ★
-function loadCardImg(container, cardId) {
-    container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;">加载中...</div>';
-    container.onclick = null;
-    let tryIdx = 0;
-    let timeoutId = null;
-
-    function attempt() {
-        if (tryIdx >= IMG_SOURCES.length) {
-            container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;text-align:center;padding:4px;">点击<br>重试</div>';
-            container.onclick = () => { tryIdx = 0; attempt(); };
-            return;
-        }
-        var currentTryIdx = tryIdx;
-        const img = new Image();
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            img.onload = null;
-            img.onerror = null;
-            img.src = '';
-            tryIdx++;
-            attempt();
-        }, 5000);
-
-        img.onload = () => {
-            clearTimeout(timeoutId);
-            container.innerHTML = '';
-            container.onclick = null;
-            container.appendChild(img);
-            sourceScores[currentTryIdx]++;
-            if (sourceScores[currentTryIdx] > sourceScores[IMG_SOURCES.indexOf(bestSource)] + 3) {
-                bestSource = IMG_SOURCES[currentTryIdx];
-            }
-        };
-        img.onerror = () => {
-            clearTimeout(timeoutId);
-            tryIdx++;
-            attempt();
-        };
-                img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
-    }
-    attempt();
-}
-loadCardImg(ic, card.id);
+       fillCardImg(ic, card.id);
         title.textContent=card.name;
         orient.textContent=card.isReversed?'逆位 ↓':'正位 ↑';
         orient.className='card-orient '+(card.isReversed?'reversed':'upright');
@@ -1543,8 +1651,7 @@ function showInterp(){
     drawn.forEach((card,idx)=>{
         const kw=card.isReversed?card.reversed:card.upright,desc=card.isReversed?card.reversedDesc:card.uprightDesc;
         const div=document.createElement('div');div.className='interp-card';div.style.animationDelay=`${idx*0.1}s`;
-        const imgUrl = getCardImageUrl(card.id);
-        div.innerHTML=`<div class="interp-header"><div class="interp-thumb"><img src="${imgUrl}" alt="${card.name}" onerror="if(!this.dataset.try){this.dataset.try='1';this.src='${IMG_SOURCES[1]}${card.id}.png'}else if(this.dataset.try==='1'){this.dataset.try='2';this.src='${IMG_SOURCES[2]}${card.id}.png'}else{this.onerror=null;this.alt='图片加载失败'}"></div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
+        div.innerHTML=`<div class="interp-header"><div class="interp-thumb">${makeCachedImgTag(card.id, card.name, 'width:100%;height:100%;display:block;object-fit:cover;')}</div><div class="info"><div class="card-name">${card.name}</div><div class="card-en">${card.en}</div></div><span class="pos-badge ${card.isReversed?'rev':'up'}">${card.isReversed?'逆位 ↓':'正位 ↑'}</span></div><div class="interp-position">✦ ${card.position}</div><div class="interp-keywords">${kw.map(k=>`<span class="interp-keyword">${k}</span>`).join('')}</div><div class="interp-sections"><div><div class="interp-section-title">✦ 牌意解读</div><div class="interp-text">${desc}</div></div>${card.love?`<div><div class="interp-section-title">♡ 感情方面</div><div class="interp-text">${card.love}</div></div>`:''} ${card.work?`<div><div class="interp-section-title">☆ 事业方面</div><div class="interp-text">${card.work}</div></div>`:''} ${card.advice?`<div><div class="interp-section-title">✧ 建议指引</div><div class="interp-text">${card.advice}</div></div>`:''}</div>`;
         area.appendChild(div);
     });
     area.scrollIntoView({behavior:'smooth',block:'start'});
@@ -1895,9 +2002,9 @@ initBookModal();
 // ===== 预加载图片（分批，不抢带宽）=====
 function preloadBatch(start, end) {
     if (start >= end) return;
-    const img = new Image();
-    img.src = getCardImageUrl(start);
-    img.onload = img.onerror = () => { setTimeout(() => preloadBatch(start + 1, end), 100); };
+    loadCachedImg(start, function() {
+        setTimeout(function() { preloadBatch(start + 1, end); }, 50);
+    });
 }
 setTimeout(() => preloadBatch(0, 22), 1000);
 setTimeout(() => preloadBatch(22, 78), 8000);
