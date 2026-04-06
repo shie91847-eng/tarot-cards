@@ -580,6 +580,7 @@
         <span class="nav-brand" onclick="showHome()">✦ ARCANA</span>
         <a class="nav-link" onclick="showHome()">占卜</a>
         <a class="nav-link" onclick="showBook()">答案之书</a>
+        <a class="nav-link" onclick="startYesNo()">是非占卜</a>
         <a class="nav-link" onclick="showEncyclopedia()">图鉴</a>
         <a class="nav-link" onclick="showHistory()">记录</a>
     </div>
@@ -634,7 +635,6 @@
             <div class="spread-card" onclick="startReading('relationship')"><div class="spread-card-icon">♡</div><div class="spread-card-name">关系牌阵</div><div class="spread-card-count">5 CARDS</div><div class="spread-card-desc">你 · 对方 · 未来</div></div>
             <div class="spread-card" onclick="startReading('hexagram')"><div class="spread-card-icon">✡</div><div class="spread-card-name">六芒星阵</div><div class="spread-card-count">7 CARDS</div><div class="spread-card-desc">综合深度分析</div></div>
             <div class="spread-card" onclick="startReading('celtic')"><div class="spread-card-icon">☸</div><div class="spread-card-name">凯尔特十字</div><div class="spread-card-count">10 CARDS</div><div class="spread-card-desc">最经典的深度解读</div></div>
-            <div class="spread-card" onclick="startYesNo()"><div class="spread-card-icon">⚡</div><div class="spread-card-name">是非占卜</div><div class="spread-card-count">1 CARD</div><div class="spread-card-desc">是？否？命运给你答案</div></div>
         </div>
         <div class="bottom-ornament">✧ As above, so below ✧</div>
     </section>
@@ -868,14 +868,14 @@ function getCardImageUrlFallback(cardId) {
             img.src = src + cardId + '.png';
         });
     });
-    // 5秒后根据得分选最优源
+    // 3秒后根据得分选最优源
     setTimeout(() => {
         if (!resolved) {
             let maxIdx = 0;
             sourceScores.forEach((s, i) => { if (s > sourceScores[maxIdx]) maxIdx = i; });
             if (sourceScores[maxIdx] > 0) bestSource = IMG_SOURCES[maxIdx];
         }
-    }, 5000);
+    }, 3000);
 })();
 // ============================================
 // TAROT DATA
@@ -1061,8 +1061,7 @@ function playSfx(type){
     else if(type==='flip'){const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=800;o.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.05);g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3);o.connect(g);o.start();o.stop(audioCtx.currentTime+0.3);}
     else if(type==='complete'){[523.25,659.25,783.99].forEach((f,i)=>{const o=audioCtx.createOscillator(),gg=audioCtx.createGain();o.type='sine';o.frequency.value=f;gg.gain.value=0;gg.gain.linearRampToValueAtTime(0.04,audioCtx.currentTime+0.1+i*0.15);gg.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1.5+i*0.15);o.connect(gg);gg.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*0.15);o.stop(audioCtx.currentTime+2);});}
 }
-function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundToggle');b.textContent=soundOn?'🔊':'🔇';b.classList.toggle('active',soundOn);if(soundOn){startBGM();}else{stopBGM();}}
-
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundToggle');b.textContent=soundOn?'🔊':'🔇';b.classList.toggle('active',soundOn);if(soundOn){initAudio();startBGM();}else{stopBGM();}}
 // ===== READING =====
 function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 // ===== 牌义图鉴 =====
@@ -1197,11 +1196,14 @@ if(spiritual){
     html += '<div class="ency-section">';
     html += '<div class="ency-section-title">✦ 灵性启示</div>';
     html += '<div class="ency-section-text">'+spiritual+'</div>';
-    html += '</div>';
+        html += '</div>';
+    }
+
+    document.getElementById('encyDetailContent').innerHTML = html;
+    document.getElementById('encyDetailModal').classList.add('active');
 }
 
 function closeEncyDetail(){document.getElementById('encyDetailModal').classList.remove('active');}
-
 // 大阿卡纳深度象征
 function getDeepSymbolism(id){
     var data = {
@@ -1493,11 +1495,7 @@ function loadCardImg(container, cardId) {
             tryIdx++;
             attempt();
         };
-        img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
-    }
-    attempt();
-}
-        img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
+                img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
     }
     attempt();
 }
@@ -1901,8 +1899,8 @@ function preloadBatch(start, end) {
     img.src = getCardImageUrl(start);
     img.onload = img.onerror = () => { setTimeout(() => preloadBatch(start + 1, end), 100); };
 }
-setTimeout(() => preloadBatch(0, 22), 3000);
-setTimeout(() => preloadBatch(22, 78), 15000);
+setTimeout(() => preloadBatch(0, 22), 1000);
+setTimeout(() => preloadBatch(22, 78), 8000);
 // ===== 微信浏览器检测 =====
 if (/MicroMessenger/i.test(navigator.userAgent)) {
     document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#030014;color:#e8dcc8;font-family:sans-serif;text-align:center;padding:40px;"><div style="font-size:2rem;margin-bottom:20px;">✦</div><div style="font-size:1.1rem;color:#f0d68a;margin-bottom:15px;">Arcana Whisper</div><div style="font-size:0.85rem;line-height:1.8;color:#b8a890;">请点击右上角 <strong style="color:#f0d68a;">⋯</strong><br>选择 <strong style="color:#f0d68a;">「在浏览器中打开」</strong><br>即可正常使用塔罗占卜</div></div>';
