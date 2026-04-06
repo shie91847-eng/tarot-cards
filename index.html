@@ -484,6 +484,72 @@
 .book-page-btn .btn-icon { font-size: 1.8rem; position: relative; z-index: 2; filter: drop-shadow(0 0 12px rgba(180,140,220,0.4)); }
 .book-page-btn .btn-text { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 4px; color: rgba(200,180,240,0.85); position: relative; z-index: 2; margin-top: 4px; }
 .book-page-hint { font-size: 0.7rem; color: var(--text-secondary); opacity: 0.4; font-weight: 300; text-align: center; line-height: 2; }
+/* ===== 图鉴样式 ===== */
+.ency-filters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; padding: 0 20px; }
+.ency-filter { padding: 7px 16px; border: 1px solid var(--glass-border); border-radius: 20px;
+    background: var(--glass-bg); color: var(--text-secondary); font-family: 'Noto Serif SC', serif;
+    font-size: 0.72rem; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
+.ency-filter.active { border-color: var(--gold); color: var(--gold-light); background: rgba(212,168,67,0.1); }
+.ency-filter:hover { border-color: var(--gold); color: var(--gold-light); }
+.ency-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;
+    max-width: 750px; width: 100%; padding: 0 20px 40px; }
+.ency-card { border: 1px solid var(--glass-border); border-radius: 10px; background: var(--glass-bg);
+    backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s; overflow: hidden; text-align: center; padding-bottom: 8px; }
+.ency-card:hover { border-color: rgba(212,168,67,0.4); transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 15px rgba(212,168,67,0.06); }
+.ency-card img { width: 100%; aspect-ratio: 5/8; object-fit: cover; display: block; border-bottom: 1px solid var(--glass-border); }
+.ency-card .ency-card-name { font-size: 0.68rem; color: var(--text-primary); padding: 6px 4px 2px; font-weight: 600; }
+.ency-card .ency-card-en { font-size: 0.5rem; color: var(--text-secondary); opacity: 0.5; }
+.ency-detail-header { display: flex; gap: 16px; margin-bottom: 18px; }
+.ency-detail-img { width: 110px; height: 176px; border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    border: 1px solid rgba(212,168,67,0.25); }
+.ency-detail-img img { width: 100%; height: 100%; object-fit: cover; }
+.ency-detail-info { flex: 1; }
+.ency-detail-name { font-family: 'Noto Serif SC', serif; font-size: 1.1rem; color: var(--gold-light); font-weight: 700; }
+.ency-detail-en { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.5; margin-top: 3px; letter-spacing: 1px; }
+.ency-detail-id { font-size: 0.6rem; color: var(--gold); opacity: 0.4; margin-top: 6px; }
+.ency-kw-section { margin-top: 10px; }
+.ency-kw-label { font-size: 0.68rem; font-weight: 600; margin-bottom: 5px; }
+.ency-kw-label.up { color: #a0c8e8; }
+.ency-kw-label.rev { color: #e8a0c0; }
+.ency-kw-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.ency-kw-tag { padding: 2px 9px; border-radius: 10px; font-size: 0.63rem; }
+.ency-kw-tag.up { background: rgba(100,160,200,0.1); border: 1px solid rgba(100,160,200,0.2); color: #a0c8e8; }
+.ency-kw-tag.rev { background: rgba(200,100,150,0.08); border: 1px solid rgba(200,100,150,0.15); color: #e8a0c0; }
+.ency-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(212,168,67,0.08); }
+.ency-section-title { font-size: 0.75rem; color: var(--gold); font-weight: 600; margin-bottom: 6px; }
+.ency-section-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.9; font-weight: 300; }
+@media (max-width: 480px) {
+    .ency-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+    .ency-detail-header { flex-direction: column; align-items: center; text-align: center; }
+    .ency-detail-img { width: 90px; height: 144px; }
+}
+.yesno-answer { font-family: 'Cinzel', serif; font-size: 1.5rem; letter-spacing: 4px; margin: 12px 0 6px; }
+.yesno-answer.yes { color: #a0d8a0; text-shadow: 0 0 20px rgba(100,200,100,0.2); }
+.yesno-answer.no { color: #e8a0a0; text-shadow: 0 0 20px rgba(200,100,100,0.2); }
+.yesno-answer.maybe { color: var(--gold-light); text-shadow: 0 0 20px rgba(212,168,67,0.2); }
+.yesno-card-info { display: flex; align-items: center; gap: 12px; justify-content: center;
+    margin: 14px 0; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px;
+    background: rgba(255,255,255,0.02); }
+.yesno-card-info img { width: 50px; height: 78px; border-radius: 4px; object-fit: cover;
+    border: 1px solid rgba(212,168,67,0.2); }
+.yesno-card-text { text-align: left; }
+.yesno-card-name { font-size: 0.9rem; color: var(--text-primary); font-weight: 600; }
+.yesno-card-orient { font-size: 0.72rem; margin-top: 2px; }
+.yesno-card-orient.upright { color: #a0d8a0; }
+.yesno-card-orient.reversed { color: #e8a0a0; }
+.yesno-msg { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.9; font-weight: 300;
+    margin: 10px 0; padding: 0 8px; }
+.yesno-confidence { display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 0.7rem; color: var(--gold); opacity: 0.6; margin-top: 8px; }
+.three-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.three-sub-item { padding: 14px 12px; border: 1px solid var(--glass-border); border-radius: 12px;
+    background: rgba(255,255,255,0.02); cursor: pointer; transition: all 0.3s; text-align: center; }
+.three-sub-item:hover { border-color: var(--gold); background: rgba(212,168,67,0.06); transform: translateY(-2px); }
+.three-sub-item .sub-icon { font-size: 1.3rem; margin-bottom: 6px; }
+.three-sub-item .sub-name { font-size: 0.82rem; color: var(--text-primary); font-weight: 600; margin-bottom: 3px; }
+.three-sub-item .sub-meanings { font-size: 0.65rem; color: var(--gold); opacity: 0.6; letter-spacing: 1px; }
+.three-sub-item .sub-desc { font-size: 0.6rem; color: var(--text-secondary); opacity: 0.5; margin-top: 4px; }
         @media (max-width: 480px) {
             .spread-grid{grid-template-columns:repeat(2,1fr);gap:10px} .spread-card{padding:20px 10px 16px}
             .spread-card-desc{display:none} .fan-card{width:38px;height:60px}
@@ -514,6 +580,7 @@
         <span class="nav-brand" onclick="showHome()">✦ ARCANA</span>
         <a class="nav-link" onclick="showHome()">占卜</a>
         <a class="nav-link" onclick="showBook()">答案之书</a>
+        <a class="nav-link" onclick="showEncyclopedia()">图鉴</a>
         <a class="nav-link" onclick="showHistory()">记录</a>
     </div>
     <div class="nav-right">
@@ -546,6 +613,7 @@
         <h1 class="hero-title">
             <span class="main-title">ARCANA WHISPER</span>
             <span class="sub-title">神 谕 塔 罗</span>
+        <span class="sub-title" id="moonPhaseDisplay" style="font-size:0.7rem;letter-spacing:3px;margin-top:12px;opacity:0.5;display:block;"></span>
         </h1>
         <div class="hero-divider"></div>
         <p class="hero-description">在无垠的星河之下，古老的智慧正在低语<br>静心聆听，让塔罗揭示命运的织锦</p>
@@ -561,11 +629,12 @@
 <div class="section-label" style="margin-bottom:14px;">选择牌组 / 功能</div>
 <div class="spread-grid">
             <div class="spread-card" onclick="startReading('single')"><div class="spread-card-icon">✧</div><div class="spread-card-name">每日一卡</div><div class="spread-card-count">1 CARD</div><div class="spread-card-desc">今日灵感指引</div></div>
-            <div class="spread-card" onclick="startReading('three')"><div class="spread-card-icon">☽ ☀ ☾</div><div class="spread-card-name">时间之流</div><div class="spread-card-count">3 CARDS</div><div class="spread-card-desc">过去 · 现在 · 未来</div></div>
+            <div class="spread-card" onclick="showThreeSubMenu()"><div class="spread-card-icon">☽ ☀ ☾</div><div class="spread-card-name">三象之镜</div><div class="spread-card-count">3 CARDS</div><div class="spread-card-desc">多种三牌解读可选</div></div>
             <div class="spread-card" onclick="startReading('cross')"><div class="spread-card-icon">✚</div><div class="spread-card-name">十字牌阵</div><div class="spread-card-count">5 CARDS</div><div class="spread-card-desc">处境 · 障碍 · 建议</div></div>
             <div class="spread-card" onclick="startReading('relationship')"><div class="spread-card-icon">♡</div><div class="spread-card-name">关系牌阵</div><div class="spread-card-count">5 CARDS</div><div class="spread-card-desc">你 · 对方 · 未来</div></div>
             <div class="spread-card" onclick="startReading('hexagram')"><div class="spread-card-icon">✡</div><div class="spread-card-name">六芒星阵</div><div class="spread-card-count">7 CARDS</div><div class="spread-card-desc">综合深度分析</div></div>
             <div class="spread-card" onclick="startReading('celtic')"><div class="spread-card-icon">☸</div><div class="spread-card-name">凯尔特十字</div><div class="spread-card-count">10 CARDS</div><div class="spread-card-desc">最经典的深度解读</div></div>
+            <div class="spread-card" onclick="startYesNo()"><div class="spread-card-icon">⚡</div><div class="spread-card-name">是非占卜</div><div class="spread-card-count">1 CARD</div><div class="spread-card-desc">是？否？命运给你答案</div></div>
         </div>
         <div class="bottom-ornament">✧ As above, so below ✧</div>
     </section>
@@ -589,6 +658,31 @@
         <div class="interp-area" id="interpArea"></div>
     </section>
 
+    <section class="page" id="encyclopediaPage">
+    <button class="back-btn" onclick="showHome()">← 返回</button>
+    <div class="reading-header" style="margin-bottom:20px;">
+        <h2>✦ 塔罗图鉴 ✦</h2>
+        <p>Arcana Encyclopedia · 点击卡牌查看详细解读</p>
+    </div>
+    <div class="ency-filters" id="encyFilters">
+        <button class="ency-filter active" onclick="filterEncy('all')">全部 · 78</button>
+        <button class="ency-filter" onclick="filterEncy('major')">大阿卡纳 · 22</button>
+        <button class="ency-filter" onclick="filterEncy('wands')">权杖 · 14</button>
+        <button class="ency-filter" onclick="filterEncy('cups')">圣杯 · 14</button>
+        <button class="ency-filter" onclick="filterEncy('swords')">宝剑 · 14</button>
+        <button class="ency-filter" onclick="filterEncy('pentacles')">星币 · 14</button>
+    </div>
+    <div class="ency-grid" id="encyGrid"></div>
+</section>
+
+<div class="modal-overlay" id="encyDetailModal">
+    <div class="modal-box" style="max-width:520px;max-height:85vh;overflow-y:auto;text-align:left;padding:28px 24px;">
+        <div id="encyDetailContent"></div>
+        <div class="modal-buttons" style="margin-top:18px;">
+            <button class="action-btn" onclick="closeEncyDetail()">关闭</button>
+        </div>
+    </div>
+</div>
     <section class="page" id="historyPage">
         <button class="back-btn" onclick="showHome()">← 返回</button>
         <h2 style="font-family:'Cinzel',serif;color:var(--gold-light);letter-spacing:4px;margin-bottom:30px;font-size:1.3rem;margin-top:80px;">✦ 占卜记录 ✦</h2>
@@ -623,6 +717,27 @@
     <div class="ai-input-bar">
         <input type="text" class="ai-input" id="aiInput" placeholder="向星谕提问..." onkeydown="if(event.key==='Enter')sendAI()">
         <button class="ai-send" id="aiSendBtn" onclick="sendAI()">发送</button>
+    </div>
+</div>
+<div class="modal-overlay" id="yesnoModal">
+    <div class="modal-box" style="max-width:440px;">
+        <h3>✦ 是非占卜 ✦</h3>
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:12px;font-weight:300;line-height:1.9;">在心中默念一个<strong style="color:var(--gold-light);">是或否</strong>的问题<br>然后点击下方抽牌</p>
+        <div id="yesnoResult" style="display:none;text-align:center;margin:18px 0;"></div>
+        <div id="yesnoAction" class="modal-buttons" style="margin-top:18px;">
+            <button class="action-btn" onclick="closeYesNo()">取消</button>
+            <button class="action-btn primary" onclick="doYesNo()">✦ 抽牌 ✦</button>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="threeSubModal">
+    <div class="modal-box" style="max-width:520px;">
+        <h3>✦ 选择镜中之象 ✦</h3>
+        <p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:20px;font-weight:300;">三张牌将分别代表什么？</p>
+        <div class="three-sub-grid" id="threeSubGrid"></div>
+        <div class="modal-buttons" style="margin-top:18px;">
+            <button class="action-btn" onclick="closeThreeSubModal()">取消</button>
+        </div>
     </div>
 </div>
 <div class="modal-overlay" id="saveModal">
@@ -950,6 +1065,334 @@ function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundTo
 
 // ===== READING =====
 function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+// ===== 牌义图鉴 =====
+var currentFilter = 'all';
+
+function showEncyclopedia(){
+    document.getElementById('homePage').classList.add('hidden');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    document.getElementById('encyclopediaPage').classList.add('active');
+    document.getElementById('encyclopediaPage').classList.add('page-enter');
+    filterEncy('all');
+}
+
+function filterEncy(type){
+    currentFilter = type;
+    var btns = document.querySelectorAll('.ency-filter');
+    btns.forEach(function(b){b.classList.remove('active');});
+    var labels = {'all':'全部','major':'大阿卡纳','wands':'权杖','cups':'圣杯','swords':'宝剑','pentacles':'星币'};
+    btns.forEach(function(b){if(b.textContent.indexOf(labels[type])>=0) b.classList.add('active');});
+
+    var cards = [];
+    if(type==='all') cards = allCards;
+    else if(type==='major') cards = majorArcana;
+    else if(type==='wands') cards = wands;
+    else if(type==='cups') cards = cups;
+    else if(type==='swords') cards = swords;
+    else if(type==='pentacles') cards = pentacles;
+
+    var grid = document.getElementById('encyGrid');
+    grid.innerHTML = cards.map(function(c){
+        var imgUrl = getCardImageUrl(c.id);
+        return '<div class="ency-card" onclick="showEncyDetail('+c.id+')">'+
+            '<img src="'+imgUrl+'" alt="'+c.name+'" loading="lazy" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=\''+IMG_SOURCES[1]+c.id+'.png\'}">'+
+            '<div class="ency-card-name">'+c.name+'</div>'+
+            '<div class="ency-card-en">'+c.en+'</div></div>';
+    }).join('');
+}
+
+function getSuitName(id){
+    if(id<22) return '大阿卡纳 Major Arcana';
+    if(id<36) return '权杖牌组 Suit of Wands';
+    if(id<50) return '圣杯牌组 Suit of Cups';
+    if(id<64) return '宝剑牌组 Suit of Swords';
+    return '星币牌组 Suit of Pentacles';
+}
+
+function getCardNumber(id){
+    if(id<22) return '编号 '+id;
+    var inSuit = (id-22)%14;
+    var ranks = ['王牌(Ace)','二','三','四','五','六','七','八','九','十','侍从(Page)','骑士(Knight)','王后(Queen)','国王(King)'];
+    return ranks[inSuit];
+}
+
+function showEncyDetail(id){
+    var card = allCards.find(function(c){return c.id===id;});
+    if(!card) return;
+    var imgUrl = getCardImageUrl(card.id);
+    var html = '';
+
+    // 头部：图片 + 基本信息
+    html += '<div class="ency-detail-header">';
+    html += '<div class="ency-detail-img"><img src="'+imgUrl+'" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=\''+IMG_SOURCES[1]+card.id+'.png\'}"></div>';
+    html += '<div class="ency-detail-info">';
+    html += '<div class="ency-detail-name">'+card.name+'</div>';
+    html += '<div class="ency-detail-en">'+card.en+'</div>';
+    html += '<div class="ency-detail-id">'+getSuitName(card.id)+' · '+getCardNumber(card.id)+'</div>';
+
+    // 正位关键词
+    html += '<div class="ency-kw-section">';
+    html += '<div class="ency-kw-label up">☀ 正位关键词</div>';
+    html += '<div class="ency-kw-tags">';
+    card.upright.forEach(function(k){html += '<span class="ency-kw-tag up">'+k+'</span>';});
+    html += '</div></div>';
+
+    // 逆位关键词
+    html += '<div class="ency-kw-section">';
+    html += '<div class="ency-kw-label rev">☽ 逆位关键词</div>';
+    html += '<div class="ency-kw-tags">';
+    card.reversed.forEach(function(k){html += '<span class="ency-kw-tag rev">'+k+'</span>';});
+    html += '</div></div>';
+
+    html += '</div></div>';
+
+    // 正位详解
+    html += '<div class="ency-section">';
+    html += '<div class="ency-section-title">☀ 正位牌意详解</div>';
+    html += '<div class="ency-section-text">'+card.uprightDesc+'</div>';
+    html += '</div>';
+
+    // 逆位详解
+    html += '<div class="ency-section">';
+    html += '<div class="ency-section-title">☽ 逆位牌意详解</div>';
+    html += '<div class="ency-section-text">'+card.reversedDesc+'</div>';
+    html += '</div>';
+
+    // 感情方面
+    if(card.love){
+        html += '<div class="ency-section">';
+        html += '<div class="ency-section-title">♡ 感情指引</div>';
+        html += '<div class="ency-section-text">'+card.love+'</div>';
+        html += '</div>';
+    }
+
+    // 事业方面
+    if(card.work){
+        html += '<div class="ency-section">';
+        html += '<div class="ency-section-title">☆ 事业指引</div>';
+        html += '<div class="ency-section-text">'+card.work+'</div>';
+        html += '</div>';
+    }
+
+    // 综合建议
+    if(card.advice){
+        html += '<div class="ency-section">';
+        html += '<div class="ency-section-title">✧ 综合建议</div>';
+        html += '<div class="ency-section-text">'+card.advice+'</div>';
+        html += '</div>';
+    }
+
+    // 象征解读（给大阿卡纳加额外的深度内容）
+   // 象征解读（大阿卡纳专属）
+var symbolism = getDeepSymbolism(card.id);
+if(symbolism){
+    html += '<div class="ency-section">';
+    html += '<div class="ency-section-title">🔮 深度象征解读</div>';
+    html += '<div class="ency-section-text">'+symbolism+'</div>';
+    html += '</div>';
+}
+// 灵性启示（所有牌）
+var spiritual = getSpiritualMeaning(card.id);
+if(spiritual){
+    html += '<div class="ency-section">';
+    html += '<div class="ency-section-title">✦ 灵性启示</div>';
+    html += '<div class="ency-section-text">'+spiritual+'</div>';
+    html += '</div>';
+}
+
+function closeEncyDetail(){document.getElementById('encyDetailModal').classList.remove('active');}
+
+// 大阿卡纳深度象征
+function getDeepSymbolism(id){
+    var data = {
+        0:"愚者脚边的悬崖象征着未知的飞跃。白色的玫瑰代表纯真与对美的渴望，手中的小包袱是过去的经验——轻便而不拖累。小白狗既是忠诚的伙伴，也象征着本能的直觉在提醒他注意脚下。编号0意味着他既在起点，也在终点，是整个愚者旅程的开端与归宿。山峰代表着他即将面对的精神考验。",
+        1:"魔术师头顶的无限符号(∞)代表他连接了无限的宇宙能量。高举的权杖将天上的灵感引导到地上的现实。桌上的四件工具——权杖(火)、圣杯(水)、宝剑(风)、星币(土)象征四大元素已备齐。红色长袍代表行动的意志，白色内袍象征内心的纯净。他是天与地之间的桥梁，将想法显化为现实。",
+        2:"女祭司坐在两根柱子之间——黑柱(Boaz)代表否定与神秘，白柱(Jachin)代表肯定与光明。她手中的卷轴是更高智慧的象征，半隐于斗篷之下意味着真相不会轻易示人。脚下的新月代表直觉与潜意识。身后的帷幕绣满石榴——象征丰饶与生命之谜。她是未显化的潜能与神秘知识的守护者。",
+        3:"皇后周围繁茂的花园象征生命力与丰饶。心形盾牌上的金星(♀)符号代表爱与美。她头戴的十二星辰冠冕象征着与自然周期的连接。流水代表情感的自由流动，麦穗象征丰收和滋养。她是大地母亲的化身，提醒我们生命本身就是最大的创造。坐垫上的红色代表激情和感官享受。",
+        4:"皇帝端坐在石头王座上，代表稳固不可动摇的权威。四个公羊头装饰象征白羊座——行动力和领导力。他手持权杖(生命力)和金球(世界的掌控)。盔甲之下穿着红袍，说明他的权力建立在行动和意志之上。荒芜的山脉暗示他选择了秩序与结构而非柔软与自然。他的数字4代表稳定、方向和基础。",
+        5:"教皇坐在两名信徒之间，代表着精神权威和传统教导。他举起右手做祝福手势，两根手指指天两根指地，象征连接灵性世界与物质世界。三层冠冕代表身、心、灵三个层面的统治。交叉钥匙象征打开意识与潜意识之门的能力。他是传承智慧的桥梁，也代表既定秩序和集体信仰。",
+        6:"恋人牌中天使的祝福代表更高力量对这段连接的认可。男人望向女人，女人望向天使，暗示着灵魂通过爱走向神性。生命之树和知识之树分别在两人身后，象征选择的永恒主题——是跟随本能还是追求智慧？蛇的出现提醒这是一个有代价的选择。这张牌的核心不仅是爱情，更是价值观的抉择。",
+        7:"战车的两匹斯芬克斯一黑一白，代表需要驾驭的对立力量——理性与感性、光明与黑暗。没有缰绳，意味着驾驭靠的不是外力控制，而是内在意志。星辰华盖代表宇宙的庇护，方形胸甲象征坚定的意志。城市在身后渐远——他已经超越了舒适区。翅膀般的日月标志暗示精神力量支撑着物质世界的前进。",
+        8:"力量牌中女子温柔地抚摸狮子的画面，是这张牌最核心的教导。狮子代表我们内心的原始欲望、愤怒和恐惧。女子没有用铁链和棍棒，而是用无限的温柔与耐心化解了野性。她头顶的无限符号与魔术师相同，暗示真正的力量源于与无限宇宙的连接。花环链接着两个存在，象征爱可以驯服一切。",
+        9:"隐士站在雪山之巅，独自持灯。灯中的六芒星是所罗门之星，象征智慧之光。灰色斗篷代表中立和隐匿——他选择退出世俗的纷争。手杖不仅用于行走，更代表内在权威。他是愚者旅途中最安静的一站——在这里，外在的冒险暂停，内在的探索开始。山顶代表精神成就的高度，但他仍在前行。",
+        10:"命运之轮上的四个角落分别是金牛(土)、狮子(火)、天鹰(水)、天使(风)，对应四大元素和四福音。轮上的三个生物代表上升(蛇/赛特)、下降(阿努比斯)、和超越(斯芬克斯)的三种力量。轮边的字母TARO可以环形阅读为TARO-ROTA-ORAT-TORA，暗示塔罗本身就是命运之轮的映射。",
+        11:"正义手持天秤与宝剑。天秤代表公平衡量一切，宝剑代表执行判决的力量和清晰的判断。她的紫色帷幕与女祭司相呼应——正义也有神秘和直觉的面向。一只脚微微露出长袍，暗示真相终将显现。方形的王冠代表有序的思维。在因果法则中，每一个选择都会带来相应的后果——不是惩罚，而是平衡。",
+        12:"倒吊人被绑在活的T型十字架(Tau Cross)上，树上长出新叶象征这种牺牲带来了新生。他的表情是平静甚至喜悦的——这不是被迫的困境，而是主动的选择。头周围的金色光环暗示他在这个颠倒的视角中获得了启示。交叉的双腿形成数字4——在不稳定中创造了稳定。这张牌教导我们：有时候投降就是最大的力量。",
+        13:"死神骑在白马上——白色代表纯净，暗示死亡本身是中性的净化力量。倒下的国王说明死亡面前众生平等。远方的双塔之间有一轮初升的太阳——最有力的重生象征。地上的花朵提醒我们生命是一个循环。旗帜上的白玫瑰是生命力和美的象征。死神的盔甲说明他不可被打败，但他带来的是必要的转变而非毁灭。",
+        14:"节制天使一脚在水中(潜意识)一脚在地上(意识)，完美连接两个世界。从一个杯子倒向另一个的水代表灵魂能量的流动与平衡。远方的金色王冠代表通过平衡达到的精神成就。胸前的三角形中的方形象征灵性(三)包含并超越物质(四)。鸢尾花象征希望与净化。这是炼金术中'伟大工作'的视觉化呈现。",
+        15:"恶魔的火炬是倒转的——象征对神圣之光的扭曲和滥用。锁链松松地挂在两个人形身上，意味着他们随时可以选择离开，却被自己的欲望和恐惧绑住。恶魔头上的倒五芒星代表物质凌驾于精神。角和翅膀是对教皇的暗黑镜像。这张牌最深的教导是：大多数囚笼都没有上锁，是我们自己选择待在里面。",
+        16:"闪电击中塔的王冠——虚假的权威和自我被真相的力量摧毁。从塔上坠落的两个人代表从虚假信念中被解放(虽然过程痛苦)。22滴火焰代表希伯来文的22个字母，也对应22张大阿卡纳——整个生命的课题在这一刻被重新洗牌。黑暗的背景中，闪电本身就是唯一的光源——有时候毁灭性的真相是最好的照明。",
+        17:"星星牌中女子跪在水边，将水同时倒入池中(潜意识)和大地(物质世界)，象征灵感同时滋养内在和外在。天上八颗星——一颗大星被七颗小星围绕，大星代表核心的灵魂之光，七颗小星对应七个脉轮。她完全裸露代表在宇宙面前毫无隐藏的真实。背景中的鸟(朱鹭)是古埃及智慧之神透特的象征。这是暴风雨后最宁静的疗愈。",
+        18:"月亮照耀着一条从水中蜿蜒到远方山脉的道路——这是潜意识到意识的旅程。龙虾从水中爬出象征最深层恐惧的浮现。狗和狼分别代表驯化的本能和野性的本能，两者在月光下同时嚎叫。双塔标记着已知与未知的边界。水面的波动暗示情绪的不稳定。月亮只反射太阳的光——提醒我们眼前所见可能只是幻象而非真相。",
+        19:"太阳牌中赤裸的孩子骑在白马上，代表纯真、自由和与生俱来的喜悦。向日葵面朝观者而非太阳——暗示你自己就是光源。红色旗帜象征行动力和生命力的全面复苏。石墙代表已经克服的障碍(塔牌的废墟被重建)。太阳放射的直线和曲线代表理性之光和感性温暖的完美融合。这是整副牌中最积极的能量。",
+        20:"审判中天使吹响号角——这是灵魂的觉醒之号。从棺材中站起来的人们代表从旧生活中重生，赤裸意味着放下了一切伪装。十字旗帜代表四大元素的整合与平衡。蓝灰色的山脉代表已经翻越的精神考验。男人、女人、孩子代表意识、潜意识和更新的自我。这不是终末审判，而是灵魂对自己一生旅程的清醒回顾和整合。",
+        21:"世界牌中央的舞者被月桂花环围绕——胜利与完成的象征。她手持两根权杖代表平衡了给予和接受、上升和下降的力量。四角的生物与命运之轮相同，但这一次它们不再转动——稳定的觉知已经达成。花环形成的椭圆形是宇宙之蛋，象征无限的可能。紫色丝带绑成无限符号，回应了魔术师的无限——旅程的终点也是新的起点。"
+    };
+    return data[id] || '';
+}
+
+// 大阿卡纳灵性启示
+function getSpiritualMeaning(id){
+    var data = {
+        0:"灵性启示：愚者代表灵魂投胎前的纯净状态——拥有无限的潜能，不被任何经验局限。在灵性修行中，愚者提醒我们保持'初心'——像第一次看见世界一样去体验每一刻。当你能够放下所有'我知道'的执念，真正的智慧才会到来。愚者的勇气不是无知的莽撞，而是信任生命本身的深层智慧。",
+        1:"灵性启示：魔术师教导我们'如在其上，如在其下'——内在的想法会显化为外在的现实。你的意念、语言和行动都是创造的工具。在冥想中观想你想要的生活，然后在现实中采取行动。魔术师提醒你：你不是生活的旁观者，你是生活的创造者。专注你的意图，你就是自己命运的魔术师。",
+        2:"灵性启示：女祭司代表直觉——那个不经由逻辑推理就'知道'的部分。她教导我们学会安静地坐着，不做任何事，只是存在。在静默中，更高的智慧会像月光一样慢慢渗透进来。如果你总是在思考和行动，灵魂的声音就会被淹没。留出独处的空间，让那个更深层的自己来指引你。",
+        3:"灵性启示：皇后代表神圣女性能量——接纳、滋养、创造。她提醒我们通过感官来体验灵性：大自然的美、食物的味道、音乐的振动都是灵魂的养分。不要把灵性局限在冥想室中，走进花园，赤脚踩在泥土上，感受风——这就是最真实的灵性体验。你的身体是灵魂的花园，好好照料它。",
+        4:"灵性启示：皇帝代表神圣男性能量——保护、建造、引导。灵性成长需要纪律和结构：固定的冥想时间、持续的学习、明确的边界都是灵性实践的基础。皇帝提醒我们，自由不是无序——真正的自由需要内在纪律的支撑。为你的灵性修行建立一个稳固的框架，然后在其中自由地探索。",
+        5:"灵性启示：教皇代表灵性传承——那些经过千百年验证的智慧传统。有时候我们不需要重新发明轮子，而是谦虚地向前人的智慧学习。找到一个共鸣的灵性传统或导师，让他们的经验照亮你的道路。同时记住，最好的老师会引导你找到自己内在的导师，而不是让你永远依赖外在的权威。",
+        6:"灵性启示：恋人牌的深层含义是灵魂的选择——每一刻你都在选择成为怎样的人。它代表内在男性与女性能量的整合，头脑与心灵的统一。当你的想法、感受和行动完全一致时，你就活出了真实的自己。不要因为恐惧而做选择，要因为爱。你选择的不只是一件事或一个人，而是一种存在方式。",
+        7:"灵性启示：战车代表通过意志力驾驭二元对立的能力。在灵性道路上，你会同时感受到黑暗和光明、恐惧和信心、执着和放手的拉扯。战车教导你不要消灭任何一方，而是让两股力量协调地推动你前进。你的灵魂就是那个驾驭者——超越了对立，在中心保持平衡，坚定地朝着目标前行。",
+        8:"灵性启示：力量牌的灵性教导是：不要与自己的阴暗面作战，而是用爱去拥抱它。你的愤怒、恐惧、嫉妒都是受伤的内在小孩在呼唤爱。当你用无条件的接纳面对自己的每一面，内在的野兽就会自然地安静下来。这种力量不消耗能量，反而生成能量——因为你不再与自己对抗了。",
+        9:"灵性启示：隐士的灯不是为了照亮远方，而是照亮脚下的每一步。灵性成长不是一个宏大的目标，而是每一刻的觉察。隐士选择独行不是因为他不爱人，而是因为他知道——真正的连接始于与自己的深度连接。在独处中找到的光明，最终会照亮你身边的每一个人。你的内在之旅比任何外在冒险都更广阔。",
+        10:"灵性启示：命运之轮教导我们宇宙中唯一不变的就是变化本身。执着于高处会带来跌落的恐惧，执着于低处会带来绝望。真正的自由是成为轮心——那个不随外界起伏而动摇的中心点。无论生命带来什么，保持觉知和平静。你不是轮子上的乘客，你是那个观察轮子转动的意识。",
+        11:"灵性启示：正义牌在灵性层面代表业力法则——不是奖惩，而是平衡。你播下的每一颗种子都会结果，你散发的每一份能量都会回到你身边。这不是为了让你恐惧，而是赋予你力量——因为这意味着你可以通过有意识的选择来创造你想要的现实。每一个善意的念头都在塑造更美好的未来。",
+        12:"灵性启示：倒吊人代表灵性中最深奥的悖论——通过放弃获得，通过停止前进。他的姿态像是一棵倒长的树，根在天上。这提醒我们：也许我们对'进步'的理解完全是颠倒的。有时候灵魂需要的不是更多的行动和努力，而是完全的臣服和静止。在这种臣服中，一种全新的视角会自然浮现。",
+        13:"灵性启示：死神是最被误解的牌。它不代表肉体的终结，而是意识的蜕变——旧的自我认同必须死去，更真实的自我才能诞生。每一次你放下一个限制性的信念，就经历了一次小小的'死亡'与重生。灵性成长的本质就是不断地死亡和重生——不断地放下已经不再服务你的东西，走向更完整的自己。",
+        14:"灵性启示：节制是灵性炼金术的象征——将对立的元素融合成更高级的存在。火与水的融合创造出蒸汽(灵性)。在你的内在，理性与直觉、行动与静止、给予与接受都需要找到和谐的配比。节制教导'中道'——不是平庸的折中，而是在两极之间找到一个超越它们的第三种可能。",
+        15:"灵性启示：恶魔牌揭示了灵性路上最大的障碍——无意识的模式和执着。那些'我不得不做'、'我控制不了'的信念本身就是锁链。恶魔邀请你面对自己最不愿意看到的部分——羞耻、恐惧、成瘾。当你有勇气在光中审视这些阴影，你会发现它们的力量急剧减弱。意识本身就是最强大的解放力量。",
+        16:"灵性启示：塔的闪电是突然的觉醒——你一直相信为真的东西突然被证明是虚假的。虽然这个过程极其痛苦，但它是灵性成长中最有力的催化剂。每一次'塔的经历'都在邀请你建造一个更真实的生命。不是建在沙地上的华丽城堡，而是建在真相基石上的简朴居所。摧毁幻象的闪电，本质上是来自灵魂的慈悲。",
+        17:"灵性启示：星星是灵魂最深的渴望——回归源头的宁静。在经历了塔的摧毁之后，灵魂赤裸地站在星空之下，终于放下了所有伪装和防御。这是最脆弱也最强大的时刻。星星的水流代表灵性能量无条件地流动——不需要资格，不需要证明，你本来就配得上宇宙的恩典。允许自己被疗愈，这本身就是一种勇气。",
+        18:"灵性启示：月亮代表灵性道路上最困难的阶段——穿越潜意识的幽暗森林。在这个阶段，你会遇到自己最深的恐惧和最古老的伤痛。所有你以为已经处理好的创伤会重新浮现。月光下的道路蜿蜒曲折，你无法看到终点。但这正是信任的考验——在看不见路的时候继续走。每一步都在带你走向黎明。",
+        19:"灵性启示：太阳代表灵性上的开悟体验——突然间，一切都清晰了。你看到生命的本质是喜悦，你的存在本身就是完美的。赤裸的孩子象征回归本初的天真——不是无知的天真，而是经历了整个旅程之后选择的天真。太阳不需要努力就能发光，你也是。当你停止试图成为某个人，你本来的光芒自然就会绽放。",
+        20:"灵性启示：审判代表灵魂使命的觉醒——你突然清楚地知道自己为什么来到这个世界。这不是来自外部的声音，而是来自灵魂最深处的召唤。所有过去的经历——痛苦的和快乐的——都在这一刻被整合为完整的拼图。你终于看到了全貌。审判邀请你回应这个召唤，活出你灵魂真正的目的，而不只是安全地度过一生。",
+        21:"灵性启示：世界代表灵性旅程的一个完整循环的结束。舞者的每一个动作都是完美的，因为她不再试图完美——她只是在存在。四大元素完全整合，内在与外在合一，个体与宇宙合一。但世界牌不是终点——月桂花环是开放的，暗示着更高维度的旅程即将开始。你毕业了，但学校有无限的年级。每一次完成都是新的开始。",
+        22:"灵性启示：权杖王牌是最原始的创造之火——那个让宇宙从虚无中诞生的第一道火花。当这股能量流经你时，你会感到一种无法抑制的冲动：去创造、去表达、去开始。不要试图控制它或等到'准备好'，因为灵感之火稍纵即逝。你的灵魂在这一刻递给你一支火炬——接住它，然后奔跑。",
+        23:"灵性启示：权杖二教导你站在选择的十字路口时，真正重要的不是选哪条路，而是你选择时的意识状态。如果你从恐惧出发，两条路都通向恐惧；如果你从内心的火焰出发，两条路都通向成长。握住你的愿景，像手握地球一样——轻柔但坚定。远方等待你的，比你能想象的更加辽阔。",
+        24:"灵性启示：权杖三是你的创造开始在世界中扎根的时刻。灵魂的火花已经不再只是一个想法，它正在成为看得见的现实。这是一个从'我想要'到'我正在创造'的关键转变。不要在这个阶段回头，也不要满足于此——远方还有更广阔的海洋在等着你的船。扬帆的时刻已经到来。",
+        25:"灵性启示：权杖四提醒你庆祝也是一种灵性修行。我们总是急于赶往下一个目标，忘记了停下来感恩已经走过的路。灵魂需要丰收节——一个承认自己已经走了多远的时刻。你建造的基础比你想象的更稳固，你创造的美好值得被庆祝。在感恩中休息，然后带着饱满的能量继续前行。",
+        26:"灵性启示：权杖五的冲突不是应该被避免的问题，而是灵魂成长的熔炉。观点的碰撞像火花一样，在摩擦中创造新的可能性。不要害怕与他人不同，也不要害怕为你相信的事物而站出来。真正的和谐不是没有冲突，而是能够在冲突中保持尊重，并从中获得比任何一方单独拥有的更大的智慧。",
+        27:"灵性启示：权杖六的胜利不是踩在别人之上的征服，而是内在品质被世界认可的时刻。你的光终于被看见了。这张牌提醒你，真正的荣耀来自于忠于自己的道路——不是为了掌声而走，而是因为这条路是真实的。享受被认可的喜悦，然后带着谦逊继续前行。荣耀不是终点，它是路上的风景。",
+        28:"灵性启示：权杖七教导你关于信念的勇气——当所有人都质疑你的时候，你是否还相信自己？灵性道路上最孤独的时刻就是当你看到了别人看不到的真相，却不得不独自坚守。这不是固执，而是对内在真理的忠诚。不是每一场战斗都需要赢，但有些立场值得你拼尽全力。你的坚持会成为他人的灯塔。",
+        29:"灵性启示：权杖八是宇宙对你说'是'的方式——当一切开始加速流动，不要踩刹车。这是灵性对齐的标志：你的意图、行动和宇宙的节奏完全同步了。在这种流动状态中，事情会毫不费力地发生。不要用怀疑打断这个流动，不要问'我配吗'。你配。信任这个速度，让它带你飞。",
+        30:"灵性启示：权杖九教导关于坚韧的灵性课题：在最疲惫的时候坚持，不是因为你不累，而是因为你知道这条路的尽头有光。每一个伟大的灵魂都经历过这样的暗夜——所有的热情似乎已经燃尽，只剩下赤裸的意志。这就是考验。不是考验你的能力，而是考验你的信念。再坚持一步。就一步。",
+        31:"灵性启示：权杖十是灵魂发出的紧急信号——你背负了不属于你的重量。在灵性上，我们常常不自觉地承担他人的情绪、期望和责任，直到自己被压垮。学会分辨哪些火把是你的使命，哪些只是别人递给你的负担。放下它们不是自私，而是对自己灵魂的尊重。你无法背着整个世界前行。",
+        32:"灵性启示：权杖侍从是灵魂中那个永远保持好奇的孩子。他提醒你：灵性成长不需要沉重和严肃，它可以是一场充满惊奇的冒险。对每一个新想法说'有趣！'而不是'不可能'。让自己像初学者一样看待世界，因为当你以为自己什么都知道的时候，学习就停止了。保持这份天真的火焰。",
+        33:"灵性启示：权杖骑士是灵魂中不可驯服的野性力量——那股让你想要打破一切限制、全速奔跑的冲动。这种能量是神圣的，不要压抑它。但也要记住，一匹脱缰的马只是在奔跑，一匹有方向的马才是在前进。将你的热情导向一个值得的目标，你会成为势不可挡的力量。激情加上方向等于使命。",
+        34:"灵性启示：权杖王后的火焰是温暖而非灼伤的。她教导你如何在保持热情的同时不烧伤自己和他人。真正的自信不需要证明什么——它像太阳一样自然地散发光和热。你的存在本身就是一种力量。不要缩小自己来让别人舒适，也不要膨胀自己来让别人仰望。只是做你自己——那已经足够耀眼。",
+        35:"灵性启示：权杖国王掌握了将灵感转化为现实的终极艺术。他的灵性教导是：愿景不够，行动不够，你需要将两者完美融合。他看到了远方的火焰，也知道脚下的每一步该怎么走。在你的灵性道路上，成为这样的国王——既能仰望星空，又能脚踏实地。用你的愿景激励他人，用你的行动证明它。",
+        36:"灵性启示：圣杯王牌是灵魂最纯粹的爱——不是来自另一个人的爱，而是来自源头的爱直接流入你的心。这份爱不需要你做任何事来换取，它无条件地涌向你。唯一需要做的就是打开你的心去接受。当你能够接受这份无条件的爱时，你自然会成为爱的管道，让它流向你生命中的每一个人。",
+        37:"灵性启示：圣杯二的灵性教导是关于'镜像'——你在他人身上看到的，都是你自己的某个面向。深刻的连接之所以深刻，是因为另一个灵魂映照出了你最真实的部分。不要去外面寻找你的另一半，因为你已经是完整的。当两个完整的灵魂相遇，创造的不是依赖，而是一加一大于二的炼金术。",
+        38:"灵性启示：圣杯三提醒你灵性不是一个人的孤独修行——我们是通过与他人的真诚连接来体验神圣的。每一次真心的欢笑、每一次深入的分享、每一次无条件的陪伴，都是灵性的高峰体验。不要把灵性和日常生活分开，你和朋友共饮的那杯茶里，和你在冥想中感受到的宁静是同一种神圣。",
+        39:"灵性启示：圣杯四是灵魂的倦怠期——你对一切都提不起兴趣，觉得生活失去了色彩。这其实是灵魂在说：你一直在从外部寻找满足感，但那口井已经干了。真正的甘泉在你内心。这种无聊和冷漠不是终点，而是一个转折点——从外求转向内求的关键时刻。抬起头，那个被你忽视的新杯子里装满了活水。",
+        40:"灵性启示：圣杯五是灵魂的悲伤功课——不是要你停止悲伤，而是教你如何在悲伤中找到智慧。被打翻的杯子代表你失去的东西，但身后还有满满的杯子代表你仍然拥有的。悲伤是爱的另一面——你之所以痛，是因为你深深地在乎过。允许自己去悲伤，但也别忘了转身。你还有这么多值得珍惜的。",
+        41:"灵性启示：圣杯六的怀旧不只是对过去的留恋，它是灵魂在提醒你：你的过去不是一堆需要疗愈的创伤，它也包含了纯真、美好和爱。重新连接童年时那个未受伤的自己——那个相信魔法、相信善良、相信一切皆有可能的孩子。他没有消失，他还在你心里，等你回来找他。内在小孩的疗愈从拥抱记忆开始。",
+        42:"灵性启示：圣杯七揭示了灵性路上最大的陷阱——幻象。我们很容易被美丽的灵性概念、令人陶醉的体验和华丽的愿景所迷惑，以至于忘了脚下的大地。不是每一个闪闪发光的东西都是真金。学会分辨哪些是灵魂真正的召唤，哪些只是ego包装过的欲望。用心去感受，而不是用眼睛去看。",
+        43:"灵性启示：圣杯八是灵魂最勇敢的选择之一——放弃看似完好的一切，去寻找更深层的真实。世俗的眼光会说你疯了，但你的灵魂知道：如果你在'完美'的生活中感到空洞，那个空洞就是灵魂的信号。有些旅程必须独自开始，有些东西必须放下才能找到。月光下离去的身影不是逃避，是朝圣。",
+        44:"灵性启示：圣杯九是灵魂的满足——不是'我得到了想要的一切'的满足，而是'我感恩我已经拥有的一切'的满足。这两种满足有天壤之别。前者永远不够，后者当下即是。真正的愿望成真不是宇宙给了你什么，而是你终于看见了宇宙已经给你的一切。当你能够在此刻说'够了'，你就拥有了一切。",
+        45:"灵性启示：圣杯十是灵魂最深层的渴望——归属、连接、和永恒的爱。彩虹是灵魂与宇宙的盟约：你是被爱着的，你永远属于一个更大的家庭。这不仅仅是人间的家庭，更是灵魂的家族。你在这个世界上不是孤独的漂泊者——每一个真心爱过你的灵魂，无论在哪里，都与你永远相连。爱是唯一不死的东西。",
+        46:"灵性启示：圣杯侍从代表灵魂中那个纯真的感受者——他不分析情感，只是完全地去体验它。在我们成长的过程中，我们学会了压抑感受、理性分析情绪、控制表达。但灵魂渴望回到那种纯粹的感受——被美打动到流泪，被爱触碰到颤抖。允许自己像孩子一样去感受，这不是脆弱，而是勇敢。",
+        47:"灵性启示：圣杯骑士是灵魂中那个为理想不顾一切的浪漫主义者。他教导我们：在一个越来越务实的世界里，敢于为了爱、为了美、为了理想而行动，本身就是一种灵性的反抗。不要让世界的冷漠冻住你的热情。追随你心中那个不切实际的梦想——因为灵魂从来不讲'实际'，它只讲'真实'。",
+        48:"灵性启示：圣杯王后拥有最深的共情能力——她能感受到他人的痛苦，也能感受到他人的喜悦。这是一种灵性天赋，但也是一种需要保护的能力。她教导你：你可以深深地感受，但不需要承担他人的情绪。像水一样——让情感流过你，但不要让它们在你身上形成淤塞。你的敏感是灵魂的触角，不是你的弱点。",
+        49:"灵性启示：圣杯国王精通情感的艺术——他能深深感受，也能智慧地引导情感的流向。他的灵性教导是：成熟不是不再感受，而是能够在感受的海洋中保持清醒。你可以悲伤却不被悲伤淹没，你可以愤怒却不被愤怒控制。掌握了这种能力的人，既是深情的爱人，也是冷静的智者。两者可以共存。",
+        50:"灵性启示：宝剑王牌是意识的闪电——突然间，你看清了一直困扰你的问题的本质。这种清晰可能来得很突然，甚至有些残忍，因为真相不总是温柔的。但每一次与真相的相遇，都是灵魂的解放。不要害怕看到不舒服的事实——正是那些不舒服的真相，拥有最大的解放力量。真相可能伤人，但谎言会杀人。",
+        51:"灵性启示：宝剑二的僵局是头脑自己创造的牢笼。你的理性在两个选项之间无限循环，越分析越困惑。蒙住眼睛不是无知，而是一种选择——暂时关闭头脑的分析，回到心的感受。有些决定不能用思考来解决，因为两个选项在逻辑上同样合理。当头脑僵住时，让心来做决定——它早就知道答案了。",
+        52:"灵性启示：宝剑三是灵魂最直接的痛苦体验——没有任何缓冲和修饰。但这种痛苦本身带着疗愈的种子。当你允许一把剑完全穿透你的心，而不是试图闪避或假装不痛时，一些奇迹般的事情会发生——痛苦会穿过你，而不是困在你的身体里。完全去感受它，然后它就能完全地离开。压抑的悲伤才会永远留下。",
+        53:"灵性启示：宝剑四是灵魂的神圣暂停。在这个永远在运转的世界里，停下来本身就是一种革命性的行为。你的头脑需要定期关机重启——就像电脑一样。在深度的静止中，被搅乱的水会自然澄清，纷乱的思绪会自然沉淀。不要觉得'什么都不做'是在浪费时间——有时候，什么都不做正是灵魂最需要你做的事。",
+        54:"灵性启示：宝剑五揭示了一个痛苦的真相：在争执中'赢'了的人往往是真正的输家。当你击败了你爱的人、你的朋友、你的同事——你赢得了论点，却可能失去了关系。灵魂的智慧是知道哪些战斗值得打，哪些胜利的代价太高。有时候最有力量的事是放下武器说：'你说得对，我理解你。'",
+        55:"灵性启示：宝剑六是灵魂从困境走向平静的过渡之旅。这段旅程可能不舒适——你正在离开熟悉的痛苦，驶向未知的平静。是的，痛苦也可以变得'熟悉'和'舒适'。离开它需要勇气。水面从波涛到平静的变化提醒你：你正在走向对的方向。即使现在感到迷茫和不确定，请继续向前。更平静的水域就在前方。",
+        56:"灵性启示：宝剑七教导你关于策略和正直之间微妙的平衡。有时候正面对抗不是最好的选择，迂回的智慧也是一种力量。但这里有一条灵性的红线——你使用的手段必须配得上你追求的目的。如果你用欺骗来追求真相，用伤害来追求和平，那么你已经输了。保持手段的清白，即使这意味着更慢、更难。",
+        57:"灵性启示：宝剑八是灵魂最重要的领悟之一——大多数限制你的东西并不是真正的牢笼，而是你头脑中的信念。'我不够好'、'我做不到'、'我不配'——这些想法像绳索一样绑住你，但它们只是想法。而想法是可以改变的。蒙住你眼睛的布是你自己围上去的，你也随时可以摘下来。自由近在咫尺。",
+        58:"灵性启示：宝剑九是凌晨三点的灵魂暗夜——当恐惧在黑暗中变得比现实大一百倍。你头脑中的灾难预演几乎总是比实际发生的事情更可怕。这张牌教导你分辨'真实的危险'和'想象中的危险'。大多数让你夜不能寐的事情永远不会发生。天亮之后，你会发现昨晚那些可怕的阴影只不过是一件椅子上的外套。",
+        59:"灵性启示：宝剑十是灵魂的最低谷——但这正是它的力量所在。当你彻底倒下的时候，一个奇妙的事情发生了：你不需要再害怕跌倒了，因为你已经在地面上了。这是一种彻底的解放。从这里开始，每一步都是向上的。最深的创伤往往带来最深的觉醒。在灵魂的语言中，结束和开始是同一个词。",
+        60:"灵性启示：宝剑侍从代表灵魂中对真理永不满足的求知欲。他像一把新磨的剑，锋利而急切。这种对真相的渴望是灵性成长的强大动力——永远不要停止提问，永远不要满足于现成的答案。但也要记住，知识和智慧是不同的。知识是剑的锋利，智慧是知道何时出鞘、何时收剑。先磨剑，再学剑法。",
+        61:"灵性启示：宝剑骑士是思维的极速战士——他的反应快如闪电，言辞锋利如刀。这种头脑的力量是双刃剑：它能快速切中问题的核心，也能无意间伤害到身边的人。灵魂的功课是学会在保持敏锐的同时培养温柔。在你说出口之前停一秒钟，问自己：这句话是必要的吗？是真实的吗？是善意的吗？速度不代表一切，方向比速度更重要。",
+        62:"灵性启示：宝剑王后是经历了苦难之后依然选择清醒和独立的灵魂。她的冷静不是冷漠——她感受一切，但不再被感受支配。她的剑指向天空，代表她用清晰的头脑为真相服务。她教导你：你可以一个人站立，而不是孤独地站立。坚强和温柔可以共存——你不需要在保护自己和敞开心扉之间选择，你可以同时做到。",
+        63:"灵性启示：宝剑国王代表思维修炼的最高成就——一颗既锋利又慈悲的心智。他可以看穿所有的幻象，但他选择用这份清醒来服务而非审判。在灵性道路上，智识能力是一把强大的工具，但如果失去了心的温度，它就会变成冰冷的牢笼。真正的智者不是什么都看透了的人，而是看透了一切却依然选择爱的人。",
+        64:"灵性启示：星币王牌是宇宙递给你的一枚种子——它代表一切物质丰盛的起点。但种子需要种进土里才会发芽。灵性和物质不是对立的——你的灵魂选择来到物质世界，就是为了体验创造的喜悦。金钱、健康、舒适的生活都是灵性的表达。接受这枚金币，把它种进勤劳和感恩的土壤里，然后看它长成一棵大树。",
+        65:"灵性启示：星币二教导你生命的动态平衡——不是静止不动的天平，而是杂技演员手中不断调整的球。工作和休息、给予和接受、物质和灵性、严肃和玩乐——你不需要在它们之间选择，而是要学会让它们像舞蹈一样轮流旋转。当你觉得某个方面失控时，不要抓紧，要放松——灵活的柳树比僵硬的橡树更能抵御风暴。",
+        66:"灵性启示：星币三是将灵魂的蓝图交给双手的时刻——你的想法需要通过实际的技艺来实现。在灵性修行中，我们往往过于关注内在世界而忽视了手艺的重要性。但神圣就藏在细节里——一个工匠对每一毫米的专注，和一个修行者在冥想中的专注是同一种能量。精益求精本身就是一种灵修。做好手中的每一件小事。",
+        67:"灵性启示：星币四揭示了我们与物质世界最深的恐惧——失去。当你紧紧抓住已经拥有的东西时，你的手就无法接受新的礼物。灵性的丰盛来自于信任——信任宇宙会持续供给你，信任你值得拥有，信任失去的东西会以更好的形式回来。松开你的拳头，你会发现手心里的东西并没有飞走，反而有更多的东西落了进来。",
+        68:"灵性启示：星币五是灵魂的匮乏体验——它不仅仅是物质上的贫困，更是一种'不够'的深层信念。这张牌邀请你审视：你真的什么都没有了吗？还是恐惧让你看不到身边的资源？风雪中的教堂之窗透着温暖的光——帮助就在你身边，但你需要放下骄傲或羞耻去接受它。请求帮助不是软弱，而是智慧。你值得被帮助。",
+        69:"灵性启示：星币六的给予和接受是宇宙能量流动的基本法则。就像呼吸一样——只吸不呼会窒息，只呼不吸也会窒息。慷慨地给予时，你打开了接受的通道；感恩地接受时，你完成了给予的循环。灵性的丰盛不是囤积，而是流动。像河流一样——水之所以保持清新，是因为它不断地流动。让你的爱和资源也这样流动。",
+        70:"灵性启示：星币七教导灵性中最容易被忽视的美德——耐心。在一个追求即时满足的时代，你愿意等待种子在黑暗的泥土中慢慢发芽吗？灵魂的成长和庄稼一样，有它自己的季节。你无法通过拔苗来助长。信任时间的力量，做好你该做的——浇水、除草、等待。你看不到的地方，根正在向更深处延伸。收获会来的。",
+        71:"灵性启示：星币八是灵魂的工匠精神——通过日复一日的练习，将粗糙的石头雕琢成精美的艺术品。而那块石头就是你自己。灵性修行不是一次戏剧性的顿悟，而是每天清晨的冥想、每一次有意识的呼吸、每一个善意的选择。水滴石穿不是水的力量，而是重复的力量。你正在一刀一刀地雕刻自己的灵魂，不要急。",
+        72:"灵性启示：星币九是灵魂的丰收季——你终于可以站在自己亲手创造的花园中，感受富足和自信。这种丰盛不是来自运气，而是来自你一步一步的积累。灵性上的'独立'不是不需要任何人，而是即使只有你自己，你也能活出美丽和尊严。你就是自己最好的伴侣，你就是自己最可靠的源泉。优雅地站在你的花园中吧。",
+        73:"灵性启示：星币十是灵魂的传承——你创造的一切不仅属于你，它会流传给后来的人。每一个善意的举动都会像涟漪一样扩散到你看不见的地方。你的爱、智慧和善良会通过你的孩子、学生、朋友继续活在这个世界上。你比你以为的更重要——你是一根链条上不可替代的一环，连接着过去和未来。好好活着就是最好的传承。",
+        74:"灵性启示：星币侍从代表灵魂中那个脚踏实地的学习者。他不追求华丽的灵性体验，而是认认真真地从基础开始。每一个大师都曾经是初学者，每一棵大树都曾经是一粒种子。不要因为自己是新手而感到羞愧，也不要因为进步缓慢而沮丧。你手中的这枚金币就是你的起点——小小的，但充满了潜能。珍惜它，培育它。",
+        75:"灵性启示：星币骑士是灵魂中最稳定可靠的力量。在一个崇尚速度和变化的时代，他提醒你：慢下来不是落后，稳定不是无趣。真正的力量不在于跑得多快，而在于能够日复一日地走在正确的道路上。灵性修行最需要的不是天赋，而是毅力。像这位骑士一样——也许不是最耀眼的，但一定是最可信赖的。坚持就是力量。",
+        76:"灵性启示：星币王后是灵魂中最温暖的滋养者——她知道如何在照顾他人的同时照顾好自己。这是一门很多人一辈子都在学习的功课。她的花园之所以繁茂，不是因为她把所有精力都给了花草，而是因为她首先给了自己充足的阳光和水。一个枯竭的给予者无法真正给予。请记住：你不是水壶，你是泉眼。先让自己充盈。",
+        77:"灵性启示：星币国王是灵魂的大地之王——他掌握了物质世界的规律，并用这种掌握来服务更高的目的。他的终极教导是：真正的富有不是拥有最多的人，而是能够自由选择用时间做什么的人。当你不再被金钱驱使，而是让金钱为你的灵魂目标服务时，你就成为了真正的国王。财富是工具，自由才是目的，爱才是意义。"
+    };
+    return data[id] || '';
+}
+   
+// ===== 是非占卜 =====
+function startYesNo(){
+    document.getElementById('yesnoResult').style.display='none';
+    document.getElementById('yesnoResult').innerHTML='';
+    document.getElementById('yesnoAction').innerHTML='<button class="action-btn" onclick="closeYesNo()">取消</button><button class="action-btn primary" onclick="doYesNo()">✦ 抽牌 ✦</button>';
+    document.getElementById('yesnoModal').classList.add('active');
+}
+function closeYesNo(){document.getElementById('yesnoModal').classList.remove('active');}
+function doYesNo(){
+    var pool=deckType==='major'?majorArcana:allCards;
+    var card=pool[Math.floor(Math.random()*pool.length)];
+    var isRev=Math.random()<0.5;
+    var yesCards=[0,1,3,6,7,8,10,11,14,17,19,21];
+    var noCards=[12,13,15,16,18];
+    var score=0;
+    if(!isRev){
+        if(yesCards.indexOf(card.id)>=0) score=2;
+        else if(noCards.indexOf(card.id)>=0) score=-1;
+        else score=1;
+    }else{
+        if(yesCards.indexOf(card.id)>=0) score=-1;
+        else if(noCards.indexOf(card.id)>=0) score=-2;
+        else score=-1;
+    }
+    if(card.id>=22){score=isRev?-1:1;}
+    var answer,aClass,stars;
+    if(score>=2){answer='✦ 命运倾向于：是 ✦';aClass='yes';stars='★★★★★';}
+    else if(score===1){answer='✦ 倾向于：是 ✦';aClass='yes';stars='★★★★☆';}
+    else if(score===0){answer='✦ 结果不明确 ✦';aClass='maybe';stars='★★★☆☆';}
+    else if(score===-1){answer='✦ 倾向于：否 ✦';aClass='no';stars='★★★★☆';}
+    else{answer='✦ 命运倾向于：否 ✦';aClass='no';stars='★★★★★';}
+    var kw=isRev?card.reversed:card.upright;
+    var desc=isRev?card.reversedDesc:card.uprightDesc;
+    var imgUrl=getCardImageUrl(card.id);
+    var resultEl=document.getElementById('yesnoResult');
+    resultEl.style.display='block';
+    resultEl.innerHTML='<div class="yesno-answer '+aClass+'">'+answer+'</div>'+
+        '<div class="yesno-card-info">'+
+            '<img src="'+imgUrl+'" onerror="this.src=\''+IMG_SOURCES[1]+card.id+'.png\'">'+
+            '<div class="yesno-card-text">'+
+                '<div class="yesno-card-name">'+card.name+' · '+card.en+'</div>'+
+                '<div class="yesno-card-orient '+(isRev?'reversed':'upright')+'">'+(isRev?'逆位 ↓':'正位 ↑')+'</div>'+
+            '</div>'+
+        '</div>'+
+        '<div class="yesno-msg">'+desc+'</div>'+
+        (card.advice?'<div class="yesno-msg" style="color:var(--gold);opacity:0.7;">✧ '+card.advice+'</div>':'')+
+        '<div class="yesno-confidence">可信度 '+stars+'</div>';
+    document.getElementById('yesnoAction').innerHTML='<button class="action-btn" onclick="closeYesNo()">关闭</button><button class="action-btn primary" onclick="doYesNo()">再问一次 ↻</button>';
+    playSfx('flip');
+}
+const threeSubTypes = [
+    { key:'time',   name:'时间之流', icon:'⏳', meanings:['过去','现在','未来'],     desc:'时间线上的三个切面' },
+    { key:'bms',    name:'身心灵',   icon:'🧠', meanings:['身体','心智','灵魂'],     desc:'探索自我的三个维度' },
+    { key:'sao',    name:'境·动·果', icon:'🎯', meanings:['处境','行动','结果'],     desc:'从现状到行动的指引' },
+    { key:'swot',   name:'明暗灯',   icon:'💡', meanings:['优势','劣势','建议'],     desc:'认清自身的光与影' },
+    { key:'choice', name:'抉择之秤', icon:'⚖️', meanings:['选项A','选项B','建议'],   desc:'面对二选一的困境' },
+    { key:'cause',  name:'因果镜',   icon:'🔮', meanings:['起因','经过','结果'],     desc:'追溯事件的因果脉络' }
+];
+function showThreeSubMenu(){
+    var grid=document.getElementById('threeSubGrid');
+    grid.innerHTML=threeSubTypes.map(function(t){
+        return '<div class="three-sub-item" onclick="startThreeReading(\''+t.key+'\')">'+
+            '<div class="sub-icon">'+t.icon+'</div>'+
+            '<div class="sub-name">'+t.name+'</div>'+
+            '<div class="sub-meanings">'+t.meanings.join(' · ')+'</div>'+
+            '<div class="sub-desc">'+t.desc+'</div></div>';
+    }).join('');
+    document.getElementById('threeSubModal').classList.add('active');
+}
+function closeThreeSubModal(){document.getElementById('threeSubModal').classList.remove('active');}
+function startThreeReading(subKey){
+    closeThreeSubModal();
+    var sub=threeSubTypes.find(function(t){return t.key===subKey;});
+    spreads.three.meanings=sub.meanings;
+    spreads.three.name='三象之镜 · '+sub.name;
+    startReading('three');
+}
 function startReading(type){
     currentSpread=spreads[type];shuffled=false;drawIdx=0;drawn=[];
     deck=(deckType==='major'?[...majorArcana]:[...allCards]).map(c=>({...c,isReversed:Math.random()<0.5}));
@@ -1020,13 +1463,12 @@ function loadCardImg(container, cardId) {
 
     function attempt() {
         if (tryIdx >= IMG_SOURCES.length) {
-            // 全部源都失败，显示重试按钮
             container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0a2e;color:#d4a843;font-size:0.5rem;cursor:pointer;text-align:center;padding:4px;">点击<br>重试</div>';
             container.onclick = () => { tryIdx = 0; attempt(); };
             return;
         }
+        var currentTryIdx = tryIdx;
         const img = new Image();
-        // 设置超时：5秒没加载完就换下一个源
         if (timeoutId) clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             img.onload = null;
@@ -1041,10 +1483,9 @@ function loadCardImg(container, cardId) {
             container.innerHTML = '';
             container.onclick = null;
             container.appendChild(img);
-            // 记录成功的源，动态调整最优源
-            sourceScores[tryIdx]++;
-            if (sourceScores[tryIdx] > sourceScores[IMG_SOURCES.indexOf(bestSource)] + 3) {
-                bestSource = IMG_SOURCES[tryIdx];
+            sourceScores[currentTryIdx]++;
+            if (sourceScores[currentTryIdx] > sourceScores[IMG_SOURCES.indexOf(bestSource)] + 3) {
+                bestSource = IMG_SOURCES[currentTryIdx];
             }
         };
         img.onerror = () => {
@@ -1052,6 +1493,10 @@ function loadCardImg(container, cardId) {
             tryIdx++;
             attempt();
         };
+        img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
+    }
+    attempt();
+}
         img.src = IMG_SOURCES[tryIdx] + cardId + '.png';
     }
     attempt();
@@ -1111,15 +1556,21 @@ function showInterp(){
 function showSaveModal(){document.getElementById('saveModal').classList.add('active');const i=document.getElementById('saveNameInput');i.value='';i.focus();}
 function closeSaveModal(){document.getElementById('saveModal').classList.remove('active');}
 function doSave(){
-    const name=document.getElementById('saveNameInput').value.trim()||'未命名占卜';
-    const record={id:Date.now(),name,date:new Date().toLocaleString('zh-CN'),spread:currentSpread.name,
-        deckType:deckType==='major'?'大阿卡纳':'全牌',cards:drawn.map(c=>({name:c.name,en:c.en,isReversed:c.isReversed,position:c.position}))};
-    let h=JSON.parse(localStorage.getItem('tarotHistory')||'[]');h.unshift(record);if(h.length>50)h=h.slice(0,50);
-    localStorage.setItem('tarotHistory',JSON.stringify(h));closeSaveModal();
-    document.querySelectorAll('.action-btn.primary').forEach(b=>{if(b.textContent.includes('保存')){const o=b.textContent;b.textContent='✓ 已保存';setTimeout(()=>b.textContent=o,1500);}});
+    try{
+        const name=document.getElementById('saveNameInput').value.trim()||'未命名占卜';
+        const record={id:Date.now(),name,date:new Date().toLocaleString('zh-CN'),spread:currentSpread.name,
+            deckType:deckType==='major'?'大阿卡纳':'全牌',cards:drawn.map(c=>({name:c.name,en:c.en,isReversed:c.isReversed,position:c.position}))};
+        let h=JSON.parse(localStorage.getItem('tarotHistory')||'[]');h.unshift(record);if(h.length>50)h=h.slice(0,50);
+        localStorage.setItem('tarotHistory',JSON.stringify(h));closeSaveModal();
+        document.querySelectorAll('.action-btn.primary').forEach(b=>{if(b.textContent.includes('保存')){const o=b.textContent;b.textContent='✓ 已保存';setTimeout(()=>b.textContent=o,1500);}});
+    }catch(e){
+        closeSaveModal();
+        alert('保存失败，可能是浏览器隐私模式或存储空间已满');
+    }
 }
 function renderHistory(){
-    const list=document.getElementById('historyList'),h=JSON.parse(localStorage.getItem('tarotHistory')||'[]');
+    const list=document.getElementById('historyList');
+    let h=[];try{h=JSON.parse(localStorage.getItem('tarotHistory')||'[]');}catch(e){h=[];}
     if(!h.length){list.innerHTML=`<div class="history-empty"><span class="icon">🌙</span><p>还没有占卜记录</p><p style="margin-top:8px;font-size:0.72rem;">去抽一张牌吧，星辰在等待你的提问</p></div>`;return;}
     list.innerHTML=h.map(r=>`<div class="history-item"><div class="history-item-header"><div><div class="history-item-name">${r.name}</div><div class="history-item-meta">${r.spread} · ${r.deckType} · ${r.date}</div></div><button class="history-delete" onclick="deleteHistory(${r.id})" title="删除">✕</button></div><div class="history-item-cards">${r.cards.map(c=>`<span class="history-tag ${c.isReversed?'rev':''}">${c.name} ${c.isReversed?'↓':'↑'}</span>`).join('')}</div></div>`).join('');
 }
@@ -1457,6 +1908,33 @@ if (/MicroMessenger/i.test(navigator.userAgent)) {
     document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#030014;color:#e8dcc8;font-family:sans-serif;text-align:center;padding:40px;"><div style="font-size:2rem;margin-bottom:20px;">✦</div><div style="font-size:1.1rem;color:#f0d68a;margin-bottom:15px;">Arcana Whisper</div><div style="font-size:0.85rem;line-height:1.8;color:#b8a890;">请点击右上角 <strong style="color:#f0d68a;">⋯</strong><br>选择 <strong style="color:#f0d68a;">「在浏览器中打开」</strong><br>即可正常使用塔罗占卜</div></div>';
 }
 // ===== INIT =====
+// ===== 月相显示 =====
+function getMoonPhase(){
+    var now=new Date(),year=now.getFullYear(),month=now.getMonth()+1,day=now.getDate();
+    if(month<=2){year--;month+=12;}
+    var A=Math.floor(year/100),B=2-A+Math.floor(A/4);
+    var JD=Math.floor(365.25*(year+4716))+Math.floor(30.6001*(month+1))+day+B-1524.5;
+    var daysSinceNew=JD-2451549.5;
+    var newMoons=daysSinceNew/29.53059;
+    var phase=(newMoons-Math.floor(newMoons))*29.53059;
+    var idx,icon,cname;
+    if(phase<1.85){idx=0;icon='🌑';cname='新月';}
+    else if(phase<5.55){idx=1;icon='🌒';cname='蛾眉月';}
+    else if(phase<9.25){idx=2;icon='🌓';cname='上弦月';}
+    else if(phase<12.95){idx=3;icon='🌔';cname='盈凸月';}
+    else if(phase<16.65){idx=4;icon='🌕';cname='满月';}
+    else if(phase<20.35){idx=5;icon='🌖';cname='亏凸月';}
+    else if(phase<24.05){idx=6;icon='🌗';cname='下弦月';}
+    else if(phase<27.75){idx=7;icon='🌘';cname='残月';}
+    else{idx=0;icon='🌑';cname='新月';}
+    return {icon:icon,name:cname,day:Math.floor(phase)};
+}
+function renderMoonPhase(){
+    var mp=getMoonPhase();
+    var el=document.getElementById('moonPhaseDisplay');
+    if(el) el.innerHTML=mp.icon+' 今夜 · '+mp.name;
+}
+renderMoonPhase();
 window.addEventListener('resize',resize);
 window.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
 resize();createParticles();requestAnimationFrame(animate);
