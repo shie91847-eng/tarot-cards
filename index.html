@@ -763,7 +763,11 @@
 let bgmAudio = null;
 function initBGM() {
     if (bgmAudio) return;
-    bgmAudio = new Audio('https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/bgm.mp3');
+    bgmAudio = new Audio('https://gitee.com/你的用户名/tarot-cards/raw/master/bgm.mp3');
+    bgmAudio.onerror = function() {
+        bgmAudio.onerror = null;
+        bgmAudio.src = 'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/bgm.mp3';
+};
     bgmAudio.loop = true;
     bgmAudio.volume = 0.3;
 }
@@ -836,9 +840,9 @@ function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.qu
     c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
     c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
 const IMG_SOURCES = [
+    'https://gitee.com/hxy888999/tarot-cards/raw/master/',
     'https://cdn.jsdelivr.net/gh/shie91847-eng/tarot-cards@main/',
-    'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/',
-    'https://raw.gitmirror.com/shie91847-eng/tarot-cards/main/'
+    'https://raw.githubusercontent.com/shie91847-eng/tarot-cards/main/'
 ];
 let bestSource = IMG_SOURCES[0];
 let sourceScores = [0, 0, 0]; // 记录每个源的成功次数
