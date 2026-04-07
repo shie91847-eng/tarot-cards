@@ -183,7 +183,7 @@
 .fan-card:hover { box-shadow: 0 0 25px rgba(212,168,67,0.2), 0 5px 20px rgba(0,0,0,0.4);
     transform: var(--fan-transform) scale(1.18) !important; z-index: 100 !important; }
 .fan-card.drawn { opacity: 0.12; pointer-events: none; transform: var(--fan-transform) scale(0.85) !important; }
-.fan-container { touch-action: none; user-select: none; -webkit-user-select: none; }
+.fan-container { touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
 .fan-container.spinning .fan-card { transition: none !important; }
 .fan-card.shuffling-anim { animation: circleShuffle 0.7s ease-in-out; }
 @keyframes circleShuffle {
@@ -1592,7 +1592,7 @@ function startThreeReading(subKey){
     startReading('three');
 }
 function startReading(type){
-    currentSpread=spreads[type];shuffled=false;drawIdx=0;drawn=[];
+    currentSpread=spreads[type];shuffled=false;drawIdx=0;drawn=[];resetAIChat();
     deck=(deckType==='major'?[...majorArcana]:[...allCards]).map(c=>({...c,isReversed:Math.random()<0.5}));
     shuffleArray(deck);
     document.getElementById('homePage').classList.add('hidden');
@@ -1665,15 +1665,16 @@ function fanInertia() {
 }
 
 function fanOnStart(e) {
-    e.preventDefault();
     var ct = document.getElementById('fanContainer');
     if (!ct) return;
-    ct.classList.add('spinning');
+    // 不要 preventDefault，让浏览器正常处理缩放等
     if (fanAnimId) { cancelAnimationFrame(fanAnimId); fanAnimId = null; }
     var rect = ct.getBoundingClientRect();
     fanCenterX = rect.left + rect.width / 2;
     fanCenterY = rect.top + rect.height / 2;
     var touch = e.touches ? e.touches[0] : e;
+    // 多指触控（缩放）不处理
+    if (e.touches && e.touches.length > 1) return;
     fanLastAngle = fanGetAngle(touch.clientX, touch.clientY);
     fanDragStartAngle = fanLastAngle;
     fanDragStartTime = Date.now();
@@ -1684,13 +1685,20 @@ function fanOnStart(e) {
 
 function fanOnMove(e) {
     if (!fanIsDragging) return;
-    e.preventDefault();
+    if (e.touches && e.touches.length > 1) { fanIsDragging = false; return; }
     var touch = e.touches ? e.touches[0] : e;
     var currentAngle = fanGetAngle(touch.clientX, touch.clientY);
     var delta = currentAngle - fanLastAngle;
-    // 处理角度跳变（从 PI 到 -PI）
     if (delta > Math.PI) delta -= Math.PI * 2;
     if (delta < -Math.PI) delta += Math.PI * 2;
+    // 只有滑动幅度够大才开始旋转，防止误触
+    if (fanTotalDragAngle < 0.03 && Math.abs(delta) < 0.01) return;
+    // 开始真正旋转时才阻止默认行为
+    if (fanTotalDragAngle > 0.03 && e.cancelable) {
+        e.preventDefault();
+    }
+    var ct = document.getElementById('fanContainer');
+    if (ct && !ct.classList.contains('spinning')) ct.classList.add('spinning');
     fanRotation += delta;
     fanTotalDragAngle += Math.abs(delta);
     fanVelocity = delta;
@@ -1701,28 +1709,45 @@ function fanOnMove(e) {
 function fanOnEnd(e) {
     if (!fanIsDragging) return;
     fanIsDragging = false;
-    var elapsed = Date.now() - fanDragStartTime;
-    // 如果滑动幅度很小，当作点击，不处理惯性
+    var ct = document.getElementById('fanContainer');
+    // 滑动幅度很小 = 点击，让原生click事件处理
     if (fanTotalDragAngle < 0.05) {
-        var ct = document.getElementById('fanContainer');
         if (ct) ct.classList.remove('spinning');
+        // 找到被点击的牌并触发
+        var touch = e.changedTouches ? e.changedTouches[0] : e;
+        if (touch && touch.clientX) {
+            var el = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (el) {
+                var fanCard = el.closest('.fan-card');
+                if (fanCard) {
+                    var idx = parseInt(fanCard.getAttribute('data-fan-index'));
+                    if (!isNaN(idx)) onFanCardClick(idx);
+                }
+            }
+        }
         return;
     }
-    // 惯性：根据最后速度继续旋转
+    // 有惯性的旋转
+    var elapsed = Date.now() - fanDragStartTime;
     if (elapsed < 300) {
         fanVelocity *= 1.5;
     }
     fanAnimId = requestAnimationFrame(fanInertia);
 }
-
 function initFanTouch() {
     var ct = document.getElementById('fanContainer');
     if (!ct) return;
-    ct.addEventListener('touchstart', fanOnStart, { passive: false });
+    // 移除旧的事件（防止重复绑定）
+    ct.removeEventListener('touchstart', fanOnStart);
+    ct.removeEventListener('touchmove', fanOnMove);
+    ct.removeEventListener('touchend', fanOnEnd);
+    ct.removeEventListener('touchcancel', fanOnEnd);
+    ct.removeEventListener('mousedown', fanOnStart);
+    // 重新绑定
+    ct.addEventListener('touchstart', fanOnStart, { passive: true });
     ct.addEventListener('touchmove', fanOnMove, { passive: false });
     ct.addEventListener('touchend', fanOnEnd);
     ct.addEventListener('touchcancel', fanOnEnd);
-    // 鼠标支持（电脑测试用）
     ct.addEventListener('mousedown', fanOnStart);
     window.addEventListener('mousemove', fanOnMove);
     window.addEventListener('mouseup', fanOnEnd);
