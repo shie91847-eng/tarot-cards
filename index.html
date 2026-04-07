@@ -1610,6 +1610,7 @@ function startReading(type){
 }
 // ===== 牌阵手指旋转 =====
 var fanRotation = 0;
+var fanJustRotated = false;
 var fanIsDragging = false;
 var fanLastAngle = 0;
 var fanVelocity = 0;
@@ -1710,24 +1711,13 @@ function fanOnEnd(e) {
     if (!fanIsDragging) return;
     fanIsDragging = false;
     var ct = document.getElementById('fanContainer');
-    // 滑动幅度很小 = 点击，让原生click事件处理
     if (fanTotalDragAngle < 0.05) {
         if (ct) ct.classList.remove('spinning');
-        // 找到被点击的牌并触发
-        var touch = e.changedTouches ? e.changedTouches[0] : e;
-        if (touch && touch.clientX) {
-            var el = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (el) {
-                var fanCard = el.closest('.fan-card');
-                if (fanCard) {
-                    var idx = parseInt(fanCard.getAttribute('data-fan-index'));
-                    if (!isNaN(idx)) onFanCardClick(idx);
-                }
-            }
-        }
         return;
     }
-    // 有惯性的旋转
+    // 标记刚刚在旋转，防止误触发点击
+    fanJustRotated = true;
+    setTimeout(function(){ fanJustRotated = false; }, 300);
     var elapsed = Date.now() - fanDragStartTime;
     if (elapsed < 300) {
         fanVelocity *= 1.5;
@@ -1802,6 +1792,7 @@ function doShuffle(){
     document.getElementById('shuffleHint').textContent='已洗牌！从弧形牌中选择你感应到的牌';updateProgress();
 }
 function onFanCardClick(fi){
+    if(fanJustRotated) return;
     if(!shuffled){doShuffle();return;}if(drawIdx>=currentSpread.count)return;
     const fc=document.querySelector(`.fan-card[data-fan-index="${fi}"]`);if(fc.classList.contains('drawn'))return;fc.classList.add('drawn');
     const card=deck[drawIdx],si=drawIdx;drawn.push({...card,position:currentSpread.meanings[si]});
