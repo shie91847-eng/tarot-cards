@@ -183,6 +183,8 @@
 .fan-card:hover { box-shadow: 0 0 25px rgba(212,168,67,0.2), 0 5px 20px rgba(0,0,0,0.4);
     transform: var(--fan-transform) scale(1.18) !important; z-index: 100 !important; }
 .fan-card.drawn { opacity: 0.12; pointer-events: none; transform: var(--fan-transform) scale(0.85) !important; }
+.fan-container { touch-action: none; user-select: none; -webkit-user-select: none; }
+.fan-container.spinning .fan-card { transition: none !important; }
 .fan-card.shuffling-anim { animation: circleShuffle 0.7s ease-in-out; }
 @keyframes circleShuffle {
     0%{transform:var(--fan-transform);opacity:1} 30%{transform:var(--fan-transform) scale(0.3);opacity:0.3}
@@ -532,8 +534,9 @@
 .yesno-card-info { display: flex; align-items: center; gap: 12px; justify-content: center;
     margin: 14px 0; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px;
     background: rgba(255,255,255,0.02); }
-.yesno-card-info img { width: 50px; height: 78px; border-radius: 4px; object-fit: cover;
-    border: 1px solid rgba(212,168,67,0.2); }
+.yesno-card-info img { width: 100%; height: 100%; border-radius: 4px; object-fit: cover; }
+.yesno-card-thumb { width: 50px; height: 78px; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(212,168,67,0.2); background: #1a0a2e; flex-shrink: 0; }
 .yesno-card-text { text-align: left; }
 .yesno-card-name { font-size: 0.9rem; color: var(--text-primary); font-weight: 600; }
 .yesno-card-orient { font-size: 0.72rem; margin-top: 2px; }
@@ -856,19 +859,18 @@ var imgCache = {};
 var imgLoading = {};
 
 function loadCachedImg(cardId, callback) {
-    // 如果已经缓存了，直接返回
     if (imgCache[cardId]) {
         callback(imgCache[cardId]);
         return;
     }
-    // 如果正在加载，排队等
     if (imgLoading[cardId]) {
         imgLoading[cardId].push(callback);
         return;
     }
-    // 开始加载，建立等待队列
     imgLoading[cardId] = [callback];
     var tryIdx = 0;
+    var round = 0;
+    var maxRounds = 2;
     var timeoutId = null;
 
     function onSuccess(src) {
@@ -876,7 +878,6 @@ function loadCachedImg(cardId, callback) {
         var queue = imgLoading[cardId] || [];
         delete imgLoading[cardId];
         queue.forEach(function(cb) { cb(src); });
-        // 记录成功的源
         var sIdx = -1;
         for (var i = 0; i < IMG_SOURCES.length; i++) {
             if (src.indexOf(IMG_SOURCES[i]) === 0) { sIdx = i; break; }
@@ -891,7 +892,12 @@ function loadCachedImg(cardId, callback) {
 
     function tryNext() {
         if (tryIdx >= IMG_SOURCES.length) {
-            // 全部失败
+            round++;
+            if (round < maxRounds) {
+                tryIdx = 0;
+                setTimeout(tryNext, 1000 + round * 1000);
+                return;
+            }
             var queue = imgLoading[cardId] || [];
             delete imgLoading[cardId];
             queue.forEach(function(cb) { cb(''); });
@@ -906,7 +912,7 @@ function loadCachedImg(cardId, callback) {
             img.src = '';
             tryIdx++;
             tryNext();
-        }, 3000);
+        }, 4000);
         img.onload = function() {
             clearTimeout(timeoutId);
             onSuccess(src);
@@ -1479,33 +1485,60 @@ function doYesNo(){
     var pool=deckType==='major'?majorArcana:allCards;
     var card=pool[Math.floor(Math.random()*pool.length)];
     var isRev=Math.random()<0.5;
-    var yesCards=[0,1,3,6,7,8,10,11,14,17,19,21];
-    var noCards=[12,13,15,16,18];
-    var score=0;
-    if(!isRev){
-        if(yesCards.indexOf(card.id)>=0) score=2;
-        else if(noCards.indexOf(card.id)>=0) score=-1;
-        else score=1;
-    }else{
-        if(yesCards.indexOf(card.id)>=0) score=-1;
-        else if(noCards.indexOf(card.id)>=0) score=-2;
-        else score=-1;
+
+    // 所有78张牌的是非倾向分数 (-2到+2)
+    var yesNoScores={
+        // 大阿卡纳
+        0:1, 1:2, 2:0, 3:2, 4:1, 5:1, 6:2, 7:2, 8:2, 9:0,
+        10:1, 11:1, 12:0, 13:-1, 14:1, 15:-2, 16:-2, 17:2, 18:-1, 19:2,
+        20:1, 21:2,
+        // 权杖 (22-35)
+        22:2, 23:1, 24:1, 25:2, 26:0, 27:2, 28:1, 29:1, 30:0, 31:-1,
+        32:1, 33:1, 34:1, 35:2,
+        // 圣杯 (36-49)
+        36:2, 37:2, 38:2, 39:-1, 40:-1, 41:0, 42:-1, 43:-1, 44:2, 45:2,
+        46:1, 47:1, 48:1, 49:1,
+        // 宝剑 (50-63)
+        50:1, 51:0, 52:-2, 53:0, 54:-1, 55:1, 56:0, 57:-1, 58:-2, 59:-2,
+        60:1, 61:1, 62:0, 63:1,
+        // 星币 (64-77)
+        64:2, 65:1, 66:1, 67:0, 68:-1, 69:1, 70:1, 71:1, 72:2, 73:2,
+        74:1, 75:1, 76:1, 77:2
+    };
+
+    // 获取基础分数
+    var baseScore = yesNoScores[card.id] !== undefined ? yesNoScores[card.id] : 0;
+
+    // 逆位翻转分数
+    var score;
+    if(isRev){
+        score = -baseScore;
+        // 原本中性的逆位稍偏否
+        if(baseScore === 0) score = -1;
+    } else {
+        score = baseScore;
     }
-    if(card.id>=22){score=isRev?-1:1;}
-    var answer,aClass,stars;
-    if(score>=2){answer='✦ 命运倾向于：是 ✦';aClass='yes';stars='★★★★★';}
-    else if(score===1){answer='✦ 倾向于：是 ✦';aClass='yes';stars='★★★★☆';}
-    else if(score===0){answer='✦ 结果不明确 ✦';aClass='maybe';stars='★★★☆☆';}
-    else if(score===-1){answer='✦ 倾向于：否 ✦';aClass='no';stars='★★★★☆';}
-    else{answer='✦ 命运倾向于：否 ✦';aClass='no';stars='★★★★★';}
-    var kw=isRev?card.reversed:card.upright;
-    var desc=isRev?card.reversedDesc:card.uprightDesc;
-    var imgUrl=getCardImageUrl(card.id);
-    var resultEl=document.getElementById('yesnoResult');
-    resultEl.style.display='block';
-    resultEl.innerHTML='<div class="yesno-answer '+aClass+'">'+answer+'</div>'+
+
+    var answer, aClass, stars, confidence;
+    if(score >= 2){
+        answer='✦ 命运倾向于：是 ✦'; aClass='yes'; stars='★★★★★'; confidence='非常强烈';
+    } else if(score === 1){
+        answer='✦ 倾向于：是 ✦'; aClass='yes'; stars='★★★★☆'; confidence='较为明确';
+    } else if(score === 0){
+        answer='✦ 结果尚不明朗 ✦'; aClass='maybe'; stars='★★★☆☆'; confidence='不够明确';
+    } else if(score === -1){
+        answer='✦ 倾向于：否 ✦'; aClass='no'; stars='★★★★☆'; confidence='较为明确';
+    } else {
+        answer='✦ 命运倾向于：否 ✦'; aClass='no'; stars='★★★★★'; confidence='非常强烈';
+    }
+
+    var desc = isRev ? card.reversedDesc : card.uprightDesc;
+    var imgUrl = getCardImageUrl(card.id);
+    var resultEl = document.getElementById('yesnoResult');
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '<div class="yesno-answer '+aClass+'">'+answer+'</div>'+
         '<div class="yesno-card-info">'+
-            '<img src="'+imgUrl+'" onerror="this.src=\''+IMG_SOURCES[1]+card.id+'.png\'">'+
+            '<div class="yesno-card-thumb" id="yesnoThumb"></div>'+
             '<div class="yesno-card-text">'+
                 '<div class="yesno-card-name">'+card.name+' · '+card.en+'</div>'+
                 '<div class="yesno-card-orient '+(isRev?'reversed':'upright')+'">'+(isRev?'逆位 ↓':'正位 ↑')+'</div>'+
@@ -1513,8 +1546,17 @@ function doYesNo(){
         '</div>'+
         '<div class="yesno-msg">'+desc+'</div>'+
         (card.advice?'<div class="yesno-msg" style="color:var(--gold);opacity:0.7;">✧ '+card.advice+'</div>':'')+
-        '<div class="yesno-confidence">可信度 '+stars+'</div>';
-    document.getElementById('yesnoAction').innerHTML='<button class="action-btn" onclick="closeYesNo()">关闭</button><button class="action-btn primary" onclick="doYesNo()">再问一次 ↻</button>';
+        '<div class="yesno-confidence">'+confidence+' · '+stars+'</div>';
+
+    // 用缓存系统加载图片
+    var thumbEl = document.getElementById('yesnoThumb');
+    if(thumbEl && typeof fillCardImg === 'function'){
+        fillCardImg(thumbEl, card.id);
+    }
+
+    document.getElementById('yesnoAction').innerHTML =
+        '<button class="action-btn" onclick="closeYesNo()">关闭</button>'+
+        '<button class="action-btn primary" onclick="doYesNo()">再问一次 ↻</button>';
     playSfx('flip');
 }
 const threeSubTypes = [
@@ -1561,27 +1603,163 @@ function startReading(type){
     document.getElementById('interpArea').innerHTML='';
     buildFan();buildSpread();
 }
-function buildFan(){
-    const ct=document.getElementById('fanContainer');ct.innerHTML='';
-    const total=Math.min(deck.length,40);
-    const size=Math.min(420, window.innerWidth*0.9);
-    const cardW=size*0.131, cardH=size*0.21;
-    const centerX=size/2, centerY=size/2;
-    const radius=(size-cardH)/2-10;
-ct.style.width=size+'px'; ct.style.height=size+'px';
-    ct.innerHTML='<div class="circle-center-text"><span class="big">☽</span><span class="small">选择感应到的牌</span></div>';
-    for(let i=0;i<total;i++){
-        const angle=(Math.PI*2*i/total)-Math.PI/2;
-        const x=centerX+Math.cos(angle)*radius-cardW/2;
-        const y=centerY+Math.sin(angle)*radius-cardH/2;
-        const rot=(angle*180/Math.PI)+90;
-        const card=document.createElement('div');card.className='fan-card';card.setAttribute('data-fan-index',i);
-        const tf=`translate(${x}px,${y}px) rotate(${rot}deg)`;
-        card.style.setProperty('--fan-transform',tf);card.style.transform=tf;
-        card.style.zIndex=i<total/2?i+1:total-i+1;
-        const cvs=document.createElement('canvas');drawCardBack(cvs,110,176);card.appendChild(cvs);
-        card.addEventListener('click',()=>onFanCardClick(i));ct.appendChild(card);
+// ===== 牌阵手指旋转 =====
+var fanRotation = 0;
+var fanIsDragging = false;
+var fanLastAngle = 0;
+var fanVelocity = 0;
+var fanAnimId = null;
+var fanDragStartTime = 0;
+var fanDragStartAngle = 0;
+var fanTotalDragAngle = 0;
+var fanContainerEl = null;
+var fanCenterX = 0;
+var fanCenterY = 0;
+
+function fanGetAngle(x, y) {
+    return Math.atan2(y - fanCenterY, x - fanCenterX);
+}
+
+function fanUpdateCards() {
+    var ct = document.getElementById('fanContainer');
+    if (!ct) return;
+    var cards = ct.querySelectorAll('.fan-card');
+    var total = cards.length;
+    if (total === 0) return;
+    var size = ct.offsetWidth;
+    var cardW = size * 0.131, cardH = size * 0.21;
+    var centerX = size / 2, centerY = size / 2;
+    var radius = (size - cardH) / 2 - 10;
+
+    for (var i = 0; i < total; i++) {
+        var baseAngle = (Math.PI * 2 * i / total) - Math.PI / 2;
+        var angle = baseAngle + fanRotation;
+        var x = centerX + Math.cos(angle) * radius - cardW / 2;
+        var y = centerY + Math.sin(angle) * radius - cardH / 2;
+        var rot = (angle * 180 / Math.PI) + 90;
+        var tf = 'translate(' + x + 'px,' + y + 'px) rotate(' + rot + 'deg)';
+        cards[i].style.setProperty('--fan-transform', tf);
+        if (!cards[i].classList.contains('drawn')) {
+            cards[i].style.transform = tf;
+        }
+        cards[i].style.zIndex = Math.round(Math.cos(angle) * 50 + 50);
     }
+}
+
+function fanInertia() {
+    if (Math.abs(fanVelocity) < 0.0003) {
+        fanVelocity = 0;
+        var ct = document.getElementById('fanContainer');
+        if (ct) ct.classList.remove('spinning');
+        return;
+    }
+    fanRotation += fanVelocity;
+    fanVelocity *= 0.95;
+    fanUpdateCards();
+    fanAnimId = requestAnimationFrame(fanInertia);
+}
+
+function fanOnStart(e) {
+    e.preventDefault();
+    var ct = document.getElementById('fanContainer');
+    if (!ct) return;
+    ct.classList.add('spinning');
+    if (fanAnimId) { cancelAnimationFrame(fanAnimId); fanAnimId = null; }
+    var rect = ct.getBoundingClientRect();
+    fanCenterX = rect.left + rect.width / 2;
+    fanCenterY = rect.top + rect.height / 2;
+    var touch = e.touches ? e.touches[0] : e;
+    fanLastAngle = fanGetAngle(touch.clientX, touch.clientY);
+    fanDragStartAngle = fanLastAngle;
+    fanDragStartTime = Date.now();
+    fanTotalDragAngle = 0;
+    fanIsDragging = true;
+    fanVelocity = 0;
+}
+
+function fanOnMove(e) {
+    if (!fanIsDragging) return;
+    e.preventDefault();
+    var touch = e.touches ? e.touches[0] : e;
+    var currentAngle = fanGetAngle(touch.clientX, touch.clientY);
+    var delta = currentAngle - fanLastAngle;
+    // 处理角度跳变（从 PI 到 -PI）
+    if (delta > Math.PI) delta -= Math.PI * 2;
+    if (delta < -Math.PI) delta += Math.PI * 2;
+    fanRotation += delta;
+    fanTotalDragAngle += Math.abs(delta);
+    fanVelocity = delta;
+    fanLastAngle = currentAngle;
+    fanUpdateCards();
+}
+
+function fanOnEnd(e) {
+    if (!fanIsDragging) return;
+    fanIsDragging = false;
+    var elapsed = Date.now() - fanDragStartTime;
+    // 如果滑动幅度很小，当作点击，不处理惯性
+    if (fanTotalDragAngle < 0.05) {
+        var ct = document.getElementById('fanContainer');
+        if (ct) ct.classList.remove('spinning');
+        return;
+    }
+    // 惯性：根据最后速度继续旋转
+    if (elapsed < 300) {
+        fanVelocity *= 1.5;
+    }
+    fanAnimId = requestAnimationFrame(fanInertia);
+}
+
+function initFanTouch() {
+    var ct = document.getElementById('fanContainer');
+    if (!ct) return;
+    ct.addEventListener('touchstart', fanOnStart, { passive: false });
+    ct.addEventListener('touchmove', fanOnMove, { passive: false });
+    ct.addEventListener('touchend', fanOnEnd);
+    ct.addEventListener('touchcancel', fanOnEnd);
+    // 鼠标支持（电脑测试用）
+    ct.addEventListener('mousedown', fanOnStart);
+    window.addEventListener('mousemove', fanOnMove);
+    window.addEventListener('mouseup', fanOnEnd);
+}
+function buildFan(){
+    fanRotation = 0;
+    fanVelocity = 0;
+    if (fanAnimId) { cancelAnimationFrame(fanAnimId); fanAnimId = null; }
+
+    var ct = document.getElementById('fanContainer');
+    ct.innerHTML = '';
+    var total = Math.min(deck.length, 40);
+    var size = Math.min(420, window.innerWidth * 0.9);
+    var cardW = size * 0.131, cardH = size * 0.21;
+    var centerX = size / 2, centerY = size / 2;
+    var radius = (size - cardH) / 2 - 10;
+    ct.style.width = size + 'px';
+    ct.style.height = size + 'px';
+    ct.innerHTML = '<div class="circle-center-text"><span class="big">☽</span><span class="small">滑动旋转 · 点击选牌</span></div>';
+
+    for (var i = 0; i < total; i++) {
+        var angle = (Math.PI * 2 * i / total) - Math.PI / 2;
+        var x = centerX + Math.cos(angle) * radius - cardW / 2;
+        var y = centerY + Math.sin(angle) * radius - cardH / 2;
+        var rot = (angle * 180 / Math.PI) + 90;
+        var card = document.createElement('div');
+        card.className = 'fan-card';
+        card.setAttribute('data-fan-index', i);
+        var tf = 'translate(' + x + 'px,' + y + 'px) rotate(' + rot + 'deg)';
+        card.style.setProperty('--fan-transform', tf);
+        card.style.transform = tf;
+        card.style.zIndex = i < total / 2 ? i + 1 : total - i + 1;
+        var cvs = document.createElement('canvas');
+        drawCardBack(cvs, 110, 176);
+        card.appendChild(cvs);
+        card.addEventListener('click', (function(idx) {
+            return function() { onFanCardClick(idx); };
+        })(i));
+        ct.appendChild(card);
+    }
+
+    initFanTouch();
 }
 function doShuffle(){
     deck=deck.map(c=>({...c,isReversed:Math.random()<0.5}));shuffleArray(deck);
